@@ -1,0 +1,28 @@
+# TechParts Store — Root .gitignore
+
+# Dependencies
+node_modules/
+
+# Environment files (NEVER commit)
+.env
+.env.local
+.env.production
+
+# Build outputs
+frontend/dist/
+backend/generated/
+
+# Prisma
+backend/prisma/migrations/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
