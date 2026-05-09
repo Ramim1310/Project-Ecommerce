@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useCart } from "../context/cartContext";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
 
@@ -94,8 +96,12 @@ export default function ProductDetails() {
              </div>
              
              {/* Fixed Button Width: Using max-w-sm to prevent it being too huge */}
-             <button className="w-full max-w-sm py-5 bg-white text-black font-black uppercase tracking-tighter hover:bg-cyan-500 hover:text-white transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:bg-gray-800">
-               Add to Rig
+             <button
+               onClick={() => addToCart(product, selectedVariant)}
+               disabled={selectedVariant.stock === 0}
+               className="w-full max-w-sm py-5 bg-white text-black font-black uppercase tracking-tighter hover:bg-cyan-500 hover:text-white transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:transform-none"
+             >
+               {selectedVariant.stock === 0 ? "Out of Stock" : "Add to Rig"}
              </button>
           </div>
         </div>

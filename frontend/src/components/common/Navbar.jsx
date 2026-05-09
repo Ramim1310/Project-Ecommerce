@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
+import { useCart } from "../../context/cartContext";
 
 export default function Navbar() {
+  const { totalItems } = useCart();
   return (
     <nav className="bg-black/90 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        
+
         {/* BRAND LOGO */}
         <Link to="/" className="flex items-center gap-2 group">
           <div className="w-10 h-10 bg-cyan-500 rounded flex items-center justify-center font-black text-black group-hover:bg-white transition-colors">
@@ -28,13 +30,28 @@ export default function Navbar() {
           </Link>
         </div>
 
+
+        {/*cart */}
+
+        <div className="relative group cursor-pointer ">
+          <span className="text-gray-400 group-hover:text-cyan-500 transition-colors text-xs font-bold uppercase tracking-widest">
+            Cart ({totalItems})
+          </span>
+          {/* Visual Indicator */}
+          {totalItems > 0 && (
+            <span className="absolute -top-2 -right-3 w-4 h-4 bg-cyan-500 text-black text-[10px] font-black rounded-full flex items-center justify-center">
+              {totalItems}
+            </span>
+          )}
+        </div>
+
         {/* USER ACTIONS (Auth Status) */}
         <div className="flex items-center gap-6">
           <Link to="/login" className="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
             Login
           </Link>
-          <Link 
-            to="/register" 
+          <Link
+            to="/register"
             className="bg-cyan-500 hover:bg-white text-black px-5 py-2.5 rounded text-[10px] font-black uppercase tracking-widest transition-all"
           >
             Join Nexus
