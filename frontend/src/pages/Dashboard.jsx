@@ -25,34 +25,21 @@ export default function Dashboard() {
     if (!user) return null;
 
     return (
-        <div className="dashboard-page">
+        <div className="min-h-screen bg-bg-deep flex flex-col">
             {/* Navbar */}
-            <nav className="dashboard-nav">
-                <span className="nav-logo">⚡ TechParts Store</span>
-                <div className="nav-user">
-                    <span style={{ color: '#64748b' }}>{user.email}</span>
-                    <div className="nav-avatar">{getInitials(user.name)}</div>
+            <nav className="bg-bg-card border-b border-border py-4 px-10 max-md:py-3.5 max-md:px-5 flex items-center justify-between">
+                <span className="text-[1.2rem] font-extrabold bg-gradient-to-br from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                    ⚡ Nexus Tech
+                </span>
+                <div className="flex items-center gap-3 text-text-secondary text-[0.9rem]">
+                    <span className="text-slate-500">{user.email}</span>
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-[0.85rem]">
+                        {getInitials(user.name)}
+                    </div>
                     <button
                         id="logout-btn"
                         onClick={handleLogout}
-                        style={{
-                            background: 'transparent',
-                            border: '1px solid #1e2d4e',
-                            color: '#94a3b8',
-                            padding: '6px 14px',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '0.85rem',
-                            transition: 'all 0.2s ease',
-                        }}
-                        onMouseOver={(e) => {
-                            e.target.style.borderColor = '#f87171';
-                            e.target.style.color = '#f87171';
-                        }}
-                        onMouseOut={(e) => {
-                            e.target.style.borderColor = '#1e2d4e';
-                            e.target.style.color = '#94a3b8';
-                        }}
+                        className="bg-transparent border border-border text-slate-400 py-1.5 px-3.5 rounded-md cursor-pointer text-[0.85rem] transition-all hover:border-red-400 hover:text-red-400"
                     >
                         Sign Out
                     </button>
@@ -60,60 +47,32 @@ export default function Dashboard() {
             </nav>
 
             {/* Main content */}
-            <main className="dashboard-content">
+            <main className="flex-1 py-12 px-10 max-w-[1100px] mx-auto w-full max-md:py-8 max-md:px-5">
                 {/* Welcome */}
-                <div className="dashboard-welcome">
-                    <h1>Welcome back, <span>{user.name?.split(' ')[0] || 'Shopper'}</span> 👋</h1>
-                    <p style={{ color: '#64748b', marginTop: '4px' }}>
+                <div className="mb-10">
+                    <h1 className="text-[2rem] font-extrabold mb-1.5 text-text-primary">
+                        Welcome back, <span className="bg-gradient-to-br from-blue-600 to-cyan-500 bg-clip-text text-transparent">{user.name?.split(' ')[0] || 'Shopper'}</span> 👋
+                    </h1>
+                    <p className="text-slate-500 mt-1">
                         Your session is active. Here's what's happening in your store.
                     </p>
                 </div>
 
                 {/* Info card */}
-                <div
-                    style={{
-                        background: 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(6,182,212,0.08))',
-                        border: '1px solid #1e2d4e',
-                        borderRadius: '16px',
-                        padding: '28px 32px',
-                        marginBottom: '36px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '24px',
-                    }}
-                >
-                    <div
-                        style={{
-                            width: '64px',
-                            height: '64px',
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #2563eb, #06b6d4)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '1.6rem',
-                            fontWeight: '800',
-                            color: '#fff',
-                            flexShrink: 0,
-                        }}
-                    >
+                <div className="bg-gradient-to-br from-blue-600/10 to-cyan-500/10 border border-border rounded-2xl py-7 px-8 mb-9 flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-[1.6rem] font-extrabold text-white shrink-0">
                         {getInitials(user.name)}
                     </div>
                     <div>
-                        <div style={{ fontWeight: '700', fontSize: '1.1rem' }}>{user.name}</div>
-                        <div style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '2px' }}>{user.email}</div>
-                        <div style={{ marginTop: '8px' }}>
+                        <div className="font-bold text-[1.1rem] text-text-primary">{user.name}</div>
+                        <div className="text-slate-500 text-[0.9rem] mt-0.5">{user.email}</div>
+                        <div className="mt-2">
                             <span
-                                style={{
-                                    background: user.role === 'ADMIN' ? 'rgba(251,191,36,0.15)' : 'rgba(52,211,153,0.12)',
-                                    border: `1px solid ${user.role === 'ADMIN' ? 'rgba(251,191,36,0.4)' : 'rgba(52,211,153,0.3)'}`,
-                                    color: user.role === 'ADMIN' ? '#fbbf24' : '#34d399',
-                                    padding: '3px 12px',
-                                    borderRadius: '20px',
-                                    fontSize: '0.78rem',
-                                    fontWeight: '600',
-                                    letterSpacing: '0.5px',
-                                }}
+                                className={`px-3 py-1 rounded-full text-[0.78rem] font-semibold tracking-[0.5px] border ${
+                                    user.role === 'ADMIN'
+                                        ? 'bg-amber-400/15 border-amber-400/40 text-amber-400'
+                                        : 'bg-emerald-400/10 border-emerald-400/30 text-emerald-400'
+                                }`}
                             >
                                 {user.role === 'ADMIN' ? '👑 Admin' : '🛒 Customer'}
                             </span>
@@ -122,53 +81,43 @@ export default function Dashboard() {
                 </div>
 
                 {/* Quick action cards */}
-                <div className="dashboard-cards">
-                    <div className="dashboard-card">
-                        <div className="dashboard-card-icon">🛒</div>
-                        <h3>My Orders</h3>
-                        <p>Track and manage your purchases</p>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5 mb-10">
+                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
+                        <div className="text-2xl mb-3.5">🛒</div>
+                        <h3 className="text-base font-semibold mb-1 text-text-primary">My Orders</h3>
+                        <p className="text-[0.85rem] text-text-secondary">Track and manage your purchases</p>
                     </div>
-                    <div className="dashboard-card">
-                        <div className="dashboard-card-icon">❤️</div>
-                        <h3>Wishlist</h3>
-                        <p>Items you're saving for later</p>
+                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
+                        <div className="text-2xl mb-3.5">❤️</div>
+                        <h3 className="text-base font-semibold mb-1 text-text-primary">Wishlist</h3>
+                        <p className="text-[0.85rem] text-text-secondary">Items you're saving for later</p>
                     </div>
-                    <div className="dashboard-card">
-                        <div className="dashboard-card-icon">🖥️</div>
-                        <h3>PC Builder</h3>
-                        <p>Configure your custom build</p>
+                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
+                        <div className="text-2xl mb-3.5">🖥️</div>
+                        <h3 className="text-base font-semibold mb-1 text-text-primary">PC Builder</h3>
+                        <p className="text-[0.85rem] text-text-secondary">Configure your custom build</p>
                     </div>
-                    <div className="dashboard-card">
-                        <div className="dashboard-card-icon">🔔</div>
-                        <h3>Alerts</h3>
-                        <p>Price drops & stock updates</p>
+                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
+                        <div className="text-2xl mb-3.5">🔔</div>
+                        <h3 className="text-base font-semibold mb-1 text-text-primary">Alerts</h3>
+                        <p className="text-[0.85rem] text-text-secondary">Price drops & stock updates</p>
                     </div>
-                    <div className="dashboard-card">
-                        <div className="dashboard-card-icon">⚙️</div>
-                        <h3>Settings</h3>
-                        <p>Manage your account details</p>
+                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
+                        <div className="text-2xl mb-3.5">⚙️</div>
+                        <h3 className="text-base font-semibold mb-1 text-text-primary">Settings</h3>
+                        <p className="text-[0.85rem] text-text-secondary">Manage your account details</p>
                     </div>
-                    <div className="dashboard-card">
-                        <div className="dashboard-card-icon">🎁</div>
-                        <h3>Deals</h3>
-                        <p>Today's best component deals</p>
+                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
+                        <div className="text-2xl mb-3.5">🎁</div>
+                        <h3 className="text-base font-semibold mb-1 text-text-primary">Deals</h3>
+                        <p className="text-[0.85rem] text-text-secondary">Today's best component deals</p>
                     </div>
                 </div>
 
                 {/* Featured banner */}
-                <div
-                    style={{
-                        background: 'linear-gradient(135deg, #0f1629, #162040)',
-                        border: '1px solid #1e2d4e',
-                        borderRadius: '16px',
-                        padding: '36px',
-                        textAlign: 'center',
-                        color: '#475569',
-                        fontSize: '0.9rem',
-                    }}
-                >
-                    <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🚀</div>
-                    <h2 style={{ color: '#94a3b8', marginBottom: '8px', fontSize: '1.2rem' }}>
+                <div className="bg-gradient-to-br from-[#0f1629] to-[#162040] border border-border rounded-2xl p-9 text-center text-slate-500 text-[0.9rem]">
+                    <div className="text-[2.5rem] mb-3">🚀</div>
+                    <h2 className="text-slate-400 mb-2 text-[1.2rem] font-bold">
                         Shop Coming Soon
                     </h2>
                     <p>The product catalog, cart, and checkout are being built. Stay tuned!</p>

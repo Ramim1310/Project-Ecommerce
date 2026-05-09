@@ -62,57 +62,66 @@ export default function Login() {
     };
 
     return (
-        <div className="auth-page">
+        <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-bg-deep overflow-hidden">
             {/* Left hero */}
-            <div className="auth-hero">
-                <div className="hero-logo">⚡ TechParts</div>
-                <p className="hero-tagline">Computer parts & components store</p>
-                <div className="hero-features">
-                    <div className="hero-feature">
-                        <span className="hero-feature-icon">🔐</span>
+            <div className="relative hidden md:flex flex-col justify-center items-center py-16 px-12 bg-bg-card border-r border-border overflow-hidden">
+                <div className="absolute -top-[120px] -left-[120px] w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.25)_0%,transparent_70%)] pointer-events-none"></div>
+                <div className="absolute -bottom-[100px] -right-[100px] w-[350px] h-[350px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.18)_0%,transparent_70%)] pointer-events-none"></div>
+                
+                <div className="text-3xl font-extrabold bg-gradient-to-br from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-3 tracking-tight z-10">
+                    ⚡ Nexus Tech
+                </div>
+                <p className="text-text-secondary text-[0.95rem] mb-12 text-center z-10">
+                    Computer parts & components store
+                </p>
+                <div className="flex flex-col gap-4 w-full max-w-[300px] z-10">
+                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
+                        <span className="text-[1.4rem] shrink-0">🔐</span>
                         <span>2-step login protection</span>
                     </div>
-                    <div className="hero-feature">
-                        <span className="hero-feature-icon">🛒</span>
+                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
+                        <span className="text-[1.4rem] shrink-0">🛒</span>
                         <span>Track your orders instantly</span>
                     </div>
-                    <div className="hero-feature">
-                        <span className="hero-feature-icon">⚙️</span>
+                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
+                        <span className="text-[1.4rem] shrink-0">⚙️</span>
                         <span>Build your custom PC</span>
                     </div>
-                    <div className="hero-feature">
-                        <span className="hero-feature-icon">💡</span>
+                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
+                        <span className="text-[1.4rem] shrink-0">💡</span>
                         <span>Expert product recommendations</span>
                     </div>
                 </div>
             </div>
 
             {/* Right form */}
-            <div className="auth-form-panel">
-                <div className="auth-card">
-                    <div className="step-indicator">
-                        <div className="step-dot active" />
-                        <div className="step-dot" />
-                        <div className="step-dot" />
+            <div className="flex items-center justify-center p-8 md:py-12 md:px-10 overflow-y-auto">
+                <div className="w-full max-w-[420px]">
+                    <div className="flex items-center gap-2 mb-8">
+                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-dot" />
+                        <div className="w-2 h-2 rounded-full bg-border" />
+                        <div className="w-2 h-2 rounded-full bg-border" />
                     </div>
 
-                    <h1 className="auth-card-title">Welcome Back</h1>
-                    <p className="auth-card-subtitle">
-                        Sign in to your TechParts account. A verification code will be sent to your email.
+                    <h1 className="text-[1.75rem] font-bold text-text-primary mb-1.5">Welcome Back</h1>
+                    <p className="text-text-secondary text-[0.9rem] mb-9">
+                        Sign in to your NExus Tech account. A verification code will be sent to your email.
                     </p>
 
                     {error && (
-                        <div className="alert alert-error">
+                        <div className="px-4 py-3 rounded-sm text-[0.88rem] mb-5 flex items-start gap-2.5 bg-red-400/10 border border-red-400/30 text-error">
                             <span>⚠</span> {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} noValidate>
-                        <div className="form-group">
-                            <label className="form-label" htmlFor="login-email">Email Address</label>
+                        <div className="mb-5">
+                            <label className="block text-[0.82rem] font-semibold text-text-secondary uppercase tracking-[0.8px] mb-2" htmlFor="login-email">
+                                Email Address
+                            </label>
                             <input
                                 id="login-email"
-                                className="form-input"
+                                className="w-full px-4 py-[13px] bg-bg-elevated border border-border rounded-sm text-text-primary text-[0.95rem] outline-none transition-all focus:border-blue-500 focus:shadow-input-focus placeholder-text-muted"
                                 type="email"
                                 name="email"
                                 placeholder="you@example.com"
@@ -122,11 +131,13 @@ export default function Login() {
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label className="form-label" htmlFor="login-password">Password</label>
+                        <div className="mb-5">
+                            <label className="block text-[0.82rem] font-semibold text-text-secondary uppercase tracking-[0.8px] mb-2" htmlFor="login-password">
+                                Password
+                            </label>
                             <input
                                 id="login-password"
-                                className="form-input"
+                                className="w-full px-4 py-[13px] bg-bg-elevated border border-border rounded-sm text-text-primary text-[0.95rem] outline-none transition-all focus:border-blue-500 focus:shadow-input-focus placeholder-text-muted"
                                 type="password"
                                 name="password"
                                 placeholder="Your password"
@@ -138,18 +149,24 @@ export default function Login() {
 
                         <button
                             id="login-submit"
-                            className="btn btn-primary"
+                            className="inline-flex items-center justify-center gap-2 px-6 py-[13px] mt-2 rounded-sm text-[0.95rem] font-semibold tracking-[0.3px] border-none outline-none transition-all bg-gradient-to-br from-blue-600 to-cyan-500 text-white w-full shadow-btn hover:-translate-y-[1px] hover:shadow-btn-hover active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed"
                             type="submit"
                             disabled={loading}
-                            style={{ marginTop: '8px' }}
                         >
-                            {loading ? <><span className="spinner" /> Signing In…</> : 'Continue →'}
+                            {loading ? (
+                                <>
+                                    <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin-custom" />
+                                    Signing In…
+                                </>
+                            ) : (
+                                'Continue →'
+                            )}
                         </button>
                     </form>
 
-                    <p className="auth-footer">
+                    <p className="text-center mt-7 text-[0.9rem] text-text-secondary">
                         Don't have an account?{' '}
-                        <Link to="/register">Create one free</Link>
+                        <Link to="/register" className="text-cyan-400 no-underline transition-colors hover:text-[#67e8f9]">Create one free</Link>
                     </p>
                 </div>
             </div>

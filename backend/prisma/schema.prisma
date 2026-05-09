@@ -23,3 +23,42 @@ model User {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  brand       String
+  description String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  
+  // JSONB for dynamic hardware specs (DPI, Switch Type, Sensor, etc.)
+  // This allows the schema to be scalable for CPUs/GPUs later 
+  specifications Json     
+  
+  variants    ProductVariant[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProductVariant {
+  id         String   @id @default(uuid())
+  sku        String   @unique // The "Atomic" identifier [cite: 32, 41]
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  
+  variantName String  // e.g., "Midnight Black" or "Linear Switches"
+  price       Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  images      String[]
+  
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  products Product[]
+}

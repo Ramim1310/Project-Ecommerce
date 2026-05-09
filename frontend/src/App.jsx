@@ -4,14 +4,20 @@ import VerifyOtp from './pages/VerifyOtp';
 import Login from './pages/Login';
 import LoginOtp from './pages/LoginOtp';
 import Dashboard from './pages/Dashboard';
+import Catalog from './pages/productCatalog';
+import ProductDetails from './pages/productDetails';
+import Navbar from "./components/common/Navbar";
 import './index.css';
 
 function App() {
     return (
         <BrowserRouter>
+            <Navbar />
             <Routes>
-                {/* Default → login */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
+               
+               <Route path="/" element={<Catalog />} />
+               <Route path="/catalog" element={<Catalog />} />
+               <Route path="/product/:id" element={<ProductDetails />} />
 
                 {/* Auth routes */}
                 <Route path="/register" element={<Register />} />
