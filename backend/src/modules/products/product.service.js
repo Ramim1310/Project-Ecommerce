@@ -3,11 +3,18 @@ const productRepository = require('./product.repository');
 
 class ProductService {
 
-    async getCatalog() {
-        const products = await productRepository.findAll();
-        const formattedProducts = products.map(product => {
+    async getCatalog(query) {
+        const filters = {
+            brand: query.brand,
+            category: query.category,
+            minPrice: query.minPrice,
+            maxPrice: query.maxPrice
+        };
+
+        const products = await productRepository.findAll(filters);
+
+        return products.map(product => {
             const primaryImage = product.variants[0]?.images[0] || 'https://placehold.co/400x300';
-            // Find the lowest price among variants
             const prices = product.variants.map(v => Number(v.price));
             const minPrice = Math.min(...prices);
 
@@ -23,15 +30,14 @@ class ProductService {
                 isInStock: product.variants.some(v => v.stock > 0)
             };
         });
-
-        return formattedProducts;
     }
+
 
     async getProductDetails(id) {
         const product = await productRepository.findById(id);
         if (!product) throw new Error("Product not found");
 
-       
+
         //  'default' one appears first.
         return {
             ...product,

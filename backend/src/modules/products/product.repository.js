@@ -12,12 +12,29 @@ class ProductRepository {
    * Fetches all products including their Atomic SKU variants.
    * This is our "Single Source of Truth" for product data retrieval.
    */
-  async findAll() {
+  async findAll(filters = {}) {
+    const { category, brand, minPrice, maxPrice } = filters;
+
     return await prisma.product.findMany({
+      where: {
+        // Standard filters
+        brand: brand ? { equals: brand, mode: 'insensitive' } : undefined,
+        category: category ? { name: { equals: category, mode: 'insensitive' } } : undefined,
+
+        // Atomic SKU filtering: Only show products where at least one variant matches the price range
+        variants: {
+          some: {
+            price: {
+              gte: minPrice ? parseFloat(minPrice) : 0,
+              lte: maxPrice ? parseFloat(maxPrice) : 999999,
+            },
+          },
+        },
+      },
       include: {
-        variants: true,   
-        category: true   
-      }
+        variants: true,
+        category: true,
+      },
     });
   }
 
@@ -34,6 +51,9 @@ class ProductRepository {
       }
     });
   }
+
+
+
 }
 
 module.exports = new ProductRepository();

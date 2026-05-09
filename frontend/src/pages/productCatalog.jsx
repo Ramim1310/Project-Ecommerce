@@ -2,19 +2,21 @@
 import { useEffect, useState } from "react";
 import { fetchCatalog } from "../api/apiClient";
 import ProductCard from "../features/products/productCard";
+import SidebarProduct from "../features/products/SidebarProduct";
 
 export default function Catalog() {
   const [products, setProducts] = useState([]);
+  const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await fetchCatalog();
+      const data = await fetchCatalog(filters);
       setProducts(data);
       setLoading(false);
     };
     loadData();
-  }, []);
+  }, [filters]);
 
   if (loading) {
     return (
@@ -27,19 +29,25 @@ export default function Catalog() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 md:p-10">
-      <header className="mb-10">
-        <h1 className="text-4xl font-black tracking-tighter uppercase italic">
-          Hardware <span className="text-nexusAccent">Catalog</span>
-        </h1>
-        <p className="text-gray-400 mt-2">Elite-grade peripherals for the top 1%.</p>
-      </header>
+    <div className="min-h-screen bg-black text-white p-8">
+      <div className="max-w-7xl mx-auto flex gap-10">
+        {/* Sidebar */}
+        <SidebarProduct onFilterChange={setFilters} currentFilters={filters} />
 
-      {/* Responsive Grid System */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5">
-        {products.map((item) => (
-          <ProductCard key={item.id} product={item} />
-        ))}
+        {/* Main Grid */}
+        <div className="flex-grow">
+          <header className="mb-8">
+            <h1 className="text-3xl font-black italic uppercase">Catalog</h1>
+          </header>
+
+          {loading ? (
+             <div className="text-cyan-500">Updating Nexus Catalog...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map(p => <ProductCard key={p.id} product={p} />)}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
