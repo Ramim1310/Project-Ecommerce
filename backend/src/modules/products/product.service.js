@@ -8,7 +8,8 @@ class ProductService {
             brand: query.brand,
             category: query.category,
             minPrice: query.minPrice,
-            maxPrice: query.maxPrice
+            maxPrice: query.maxPrice,
+            searchTerm: query.search  // pass search term from query string
         };
 
         const products = await productRepository.findAll(filters);

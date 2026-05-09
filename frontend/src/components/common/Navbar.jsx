@@ -1,8 +1,21 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/cartContext";
+import useDebounce from "../../hooks/deBounce";
+import { useState, useEffect } from "react";
 
-export default function Navbar() {
+export default function Navbar({ onSearch }) {
+
+
   const { totalItems } = useCart();
+
+  const [term, setTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(term, 500); // 500ms delay
+
+  useEffect(() => {
+    // Only trigger search when the debounced value changes
+    if (onSearch) onSearch(debouncedSearchTerm);
+  }, [debouncedSearchTerm, onSearch]);
+
   return (
     <nav className="bg-black/90 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -30,6 +43,21 @@ export default function Navbar() {
           </Link>
         </div>
 
+        {/* SEARCH BAR — center position */}
+        <div className="flex-1 max-w-md mx-10 hidden lg:block">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="SEARCH_HARDWARE_..."
+              className="w-full bg-[#111] border border-gray-800 rounded py-2 px-4 text-xs font-mono text-cyan-500 focus:outline-none focus:border-cyan-500 transition-all"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+            />
+            <span className="absolute right-3 top-2 text-gray-600 font-mono text-[10px]">
+              [CTRL+K]
+            </span>
+          </div>
+        </div>
 
         {/*cart */}
 

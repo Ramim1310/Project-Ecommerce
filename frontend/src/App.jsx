@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import Register from './pages/Register';
 import VerifyOtp from './pages/VerifyOtp';
 import Login from './pages/Login';
@@ -10,13 +11,14 @@ import Navbar from "./components/common/Navbar";
 import './index.css';
 
 function App() {
+    const [searchTerm, setSearchTerm] = useState("");
     return (
         <BrowserRouter>
-            <Navbar />
+            <Navbar onSearch={setSearchTerm} />
             <Routes>
                
-               <Route path="/" element={<Catalog />} />
-               <Route path="/catalog" element={<Catalog />} />
+               <Route path="/" element={<Catalog searchTerm={searchTerm} />} />
+               <Route path="/catalog" element={<Catalog searchTerm={searchTerm} />} />
                <Route path="/product/:id" element={<ProductDetails />} />
 
                 {/* Auth routes */}

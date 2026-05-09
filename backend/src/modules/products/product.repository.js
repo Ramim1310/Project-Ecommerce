@@ -13,10 +13,15 @@ class ProductRepository {
    * This is our "Single Source of Truth" for product data retrieval.
    */
   async findAll(filters = {}) {
-    const { category, brand, minPrice, maxPrice } = filters;
+    const { category, brand, minPrice, maxPrice, searchTerm } = filters;
 
     return await prisma.product.findMany({
       where: {
+        //search query for product name and brand
+        OR: searchTerm ? [
+          { name: { contains: searchTerm, mode: 'insensitive' } },
+          { brand: { contains: searchTerm, mode: 'insensitive' } },
+        ] : undefined,
         // Standard filters
         brand: brand ? { equals: brand, mode: 'insensitive' } : undefined,
         category: category ? { name: { equals: category, mode: 'insensitive' } } : undefined,

@@ -4,19 +4,23 @@ import { fetchCatalog } from "../api/apiClient";
 import ProductCard from "../features/products/productCard";
 import SidebarProduct from "../features/products/SidebarProduct";
 
-export default function Catalog() {
+export default function Catalog({ searchTerm = "" }) {
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await fetchCatalog(filters);
+      // Merge searchTerm into filters before sending to API
+      const activeFilters = searchTerm
+        ? { ...filters, search: searchTerm }
+        : filters;
+      const data = await fetchCatalog(activeFilters);
       setProducts(data);
       setLoading(false);
     };
     loadData();
-  }, [filters]);
+  }, [filters, searchTerm]);
 
   if (loading) {
     return (
