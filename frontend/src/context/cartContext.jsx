@@ -21,12 +21,14 @@ export const CartProvider = ({ children }) => {
       if (existingItem) {
         // Validation: Don't exceed stock
         const newQty = existingItem.quantity + quantity;
-        if (newQty > variant.stock) return prev; 
+        if (newQty > variant.stock) return prev;
 
         return prev.map((item) =>
           item.sku === variant.sku ? { ...item, quantity: newQty } : item
         );
       }
+
+
 
       // Add new item if it doesn't exist
       return [...prev, {
@@ -53,8 +55,16 @@ export const CartProvider = ({ children }) => {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  //cart slider open and close
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleCart = () => setIsOpen(!isOpen);
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, totalItems, totalPrice }}>
+    <CartContext.Provider value={{
+      cart, addToCart, removeFromCart,
+      clearCart, totalItems, totalPrice,
+      isOpen, toggleCart
+    }}>
       {children}
     </CartContext.Provider>
   );

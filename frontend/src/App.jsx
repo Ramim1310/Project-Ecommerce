@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Catalog from './pages/productCatalog';
 import ProductDetails from './pages/productDetails';
 import Navbar from "./components/common/Navbar";
+import CartDrawer from "./features/cart/cartSlider";
 import './index.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
     return (
         <BrowserRouter>
             <Navbar onSearch={setSearchTerm} />
+            <CartDrawer />
             <Routes>
                
                <Route path="/" element={<Catalog searchTerm={searchTerm} />} />

@@ -3,10 +3,11 @@ import { useCart } from "../../context/cartContext";
 import useDebounce from "../../hooks/deBounce";
 import { useState, useEffect } from "react";
 
+
 export default function Navbar({ onSearch }) {
 
 
-  const { totalItems } = useCart();
+  const { totalItems, toggleCart } = useCart();
 
   const [term, setTerm] = useState("");
   const debouncedSearchTerm = useDebounce(term, 500); // 500ms delay
@@ -18,7 +19,7 @@ export default function Navbar({ onSearch }) {
 
   return (
     <nav className="bg-black/90 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="w-full px-8 h-20 flex items-center justify-between">
 
         {/* BRAND LOGO */}
         <Link to="/" className="flex items-center gap-2 group">
@@ -62,9 +63,11 @@ export default function Navbar({ onSearch }) {
         {/*cart */}
 
         <div className="relative group cursor-pointer ">
-          <span className="text-gray-400 group-hover:text-cyan-500 transition-colors text-xs font-bold uppercase tracking-widest">
-            Cart ({totalItems})
-          </span>
+          <div onClick={toggleCart} className="cursor-pointer">
+            <span className="text-gray-400 group-hover:text-cyan-500 transition-colors text-xs font-bold uppercase tracking-widest">
+              Cart ({totalItems})
+            </span>
+          </div>
           {/* Visual Indicator */}
           {totalItems > 0 && (
             <span className="absolute -top-2 -right-3 w-4 h-4 bg-cyan-500 text-black text-[10px] font-black rounded-full flex items-center justify-center">
