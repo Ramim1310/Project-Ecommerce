@@ -37,10 +37,14 @@ export default function Login() {
             });
 
             if (data.requiresTwoFactor) {
-                // Go to 2FA OTP page
+                // Regular user → 2FA OTP page
                 navigate('/login/verify', {
                     state: { email: form.email, purpose: 'login' },
                 });
+            } else if (data.token) {
+                // Admin shortcut — JWT issued directly, no OTP needed
+                saveSession(data.token, data.user);
+                navigate(data.user?.role === 'ADMIN' ? '/admin' : '/dashboard', { replace: true });
             }
         } catch (err) {
             const msg = err.response?.data?.message || 'Login failed. Please try again.';
@@ -60,6 +64,7 @@ export default function Login() {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-bg-deep overflow-hidden">

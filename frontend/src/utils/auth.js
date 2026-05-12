@@ -64,3 +64,11 @@ export function clearSession() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
 }
+
+/**
+ * Returns true if the stored user has role ADMIN.
+ */
+export function isAdmin() {
+    const user = getUser();
+    return user?.role === 'ADMIN';
+}

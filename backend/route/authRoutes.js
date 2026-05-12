@@ -138,6 +138,32 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required.' });
         }
 
+        // ─── ADMIN SHORTCUT ──────────────────────────────────────────
+        // Hardcoded admin credentials live only in .env (never in source code).
+        // Admin bypasses OTP entirely and gets a JWT directly.
+        if (
+            process.env.ADMIN_EMAIL &&
+            email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase()
+        ) {
+            const isAdminValid = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
+            if (!isAdminValid) {
+                return res.status(401).json({ message: 'Invalid email or password.' });
+            }
+
+            const token = jwt.sign(
+                { id: 'admin', email, name: 'Admin', role: 'ADMIN' },
+                process.env.JWT_SECRET,
+                { expiresIn: '8h' }
+            );
+
+            return res.status(200).json({
+                message: 'Admin login successful.',
+                token,
+                user: { id: 'admin', name: 'Admin', email, role: 'ADMIN' },
+            });
+        }
+        // ─────────────────────────────────────────────────────────────
+
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password.' });
@@ -178,6 +204,7 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 });
+
 
 
 // ─────────────────────────────────────────

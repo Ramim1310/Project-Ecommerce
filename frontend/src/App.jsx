@@ -5,10 +5,13 @@ import VerifyOtp from './pages/VerifyOtp';
 import Login from './pages/Login';
 import LoginOtp from './pages/LoginOtp';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import ManageProducts from './pages/admin/manageProduct';
 import Catalog from './pages/productCatalog';
 import ProductDetails from './pages/productDetails';
 import Navbar from "./components/common/Navbar";
 import CartDrawer from "./features/cart/cartSlider";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import './index.css';
 
 function App() {
@@ -29,8 +32,18 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/login/verify" element={<LoginOtp />} />
 
-                {/* Protected */}
-                <Route path="/dashboard" element={<Dashboard />} />
+                {/* Protected — regular users */}
+                <Route path="/dashboard" element={
+                    <ProtectedRoute><Dashboard /></ProtectedRoute>
+                } />
+
+                {/* Protected — admin only */}
+                <Route path="/admin" element={
+                    <ProtectedRoute role="ADMIN"><AdminDashboard /></ProtectedRoute>
+                } />
+                <Route path="/admin/manage-products" element={
+                    <ProtectedRoute role="ADMIN"><ManageProducts /></ProtectedRoute>
+                } />
 
                 {/* 404 fallback */}
                 <Route path="*" element={<Navigate to="/login" replace />} />
