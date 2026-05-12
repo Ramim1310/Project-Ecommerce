@@ -57,6 +57,45 @@ class ProductRepository {
     });
   }
 
+  async findAllForAdmin() {
+    return await prisma.product.findMany({
+      include: {
+        variants: true,   // We need to see every SKU
+        category: true    // We need to see the category name
+      },
+      orderBy: {
+        createdAt: 'desc' // Newest products at the top
+      }
+    });
+  }
+
+  // create product from admin
+
+  async createProduct(productData, variantsData) {
+    return await prisma.product.create({
+      data: {
+        name: productData.name,
+        brand: productData.brand,
+        description: productData.description,
+        categoryId: productData.categoryId,
+        specifications: productData.specifications,
+        variants: {
+          create: variantsData // Array of variant objects
+        }
+      },
+      include: {
+        variants: true, // Return the created variants along with the product
+        category: true,   // Return the associated category
+      },
+    })
+  }
+
+  async deleteProduct(id) {
+    return await prisma.product.delete({
+      where: { id }
+    });
+  }
+
 
 
 }

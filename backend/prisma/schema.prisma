@@ -45,7 +45,7 @@ model ProductVariant {
   id         String   @id @default(uuid())
   sku        String   @unique // The "Atomic" identifier [cite: 32, 41]
   productId  String
-  product    Product  @relation(fields: [productId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   
   variantName String  // e.g., "Midnight Black" or "Linear Switches"
   price       Decimal  @db.Decimal(10, 2)
