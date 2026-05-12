@@ -1,7 +1,7 @@
 import { useCart } from "../../context/cartContext";
 
 export default function CartDrawer() {
-  const { cart, isOpen, toggleCart, removeFromCart, totalPrice } = useCart();
+  const { cart, isOpen, toggleCart, removeFromCart, updateQuantity, totalPrice } = useCart();
 
   if (!isOpen) return null;
 
@@ -42,16 +42,41 @@ export default function CartDrawer() {
                   <h4 className="text-white text-sm font-bold uppercase truncate">{item.name}</h4>
                   <p className="text-xs text-cyan-500 font-mono mt-1">{item.variantName}</p>
                   <div className="flex justify-between items-center mt-2">
-                    <span className="text-gray-400 text-xs italic">Qty: {item.quantity}</span>
-                    <span className="text-white font-bold">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="text-white font-bold">${Number(item.price).toFixed(2)}</span>
+                    <button
+                      onClick={() => removeFromCart(item.sku)}
+                      className="text-gray-800 group-hover:text-red-500 transition-colors text-xs"
+                    >
+                      REMOVE
+                    </button>
+                  </div>
+
+                  {/* Quantity Stepper + Subtotal */}
+                  <div className="flex items-center gap-4 mt-3">
+                    <div className="flex items-center border border-gray-800 rounded bg-black">
+                      <button
+                        onClick={() => updateQuantity(item.sku, -1)}
+                        className="px-3 py-1 text-gray-500 hover:text-cyan-500 transition-colors border-r border-gray-800 disabled:opacity-30"
+                        disabled={item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <span className="px-4 py-1 text-xs font-mono text-white">
+                        {item.quantity.toString().padStart(2, '0')}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(item.sku, 1)}
+                        className="px-3 py-1 text-gray-500 hover:text-cyan-500 transition-colors border-l border-gray-800 disabled:opacity-30"
+                        disabled={item.quantity >= item.stock}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="text-gray-500 text-[10px] uppercase font-mono">
+                      Sub: ${(Number(item.price) * item.quantity).toFixed(2)}
+                    </span>
                   </div>
                 </div>
-                <button 
-                  onClick={() => removeFromCart(item.sku)}
-                  className="text-gray-800 group-hover:text-red-500 transition-colors text-xs"
-                >
-                  REMOVE
-                </button>
               </div>
             ))
           )}

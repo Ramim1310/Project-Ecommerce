@@ -51,6 +51,25 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => setCart([]);
 
+  const updateQuantity = (sku, delta) => {
+    setCart((prev) =>
+      prev.map((item) => {
+        if (item.sku === sku) {
+          const newQty = item.quantity + delta;
+
+          // 1. Min Boundary: Don't go below 1
+          if (newQty < 1) return item;
+
+          // 2. Max Boundary: Don't exceed current stock
+          if (newQty > item.stock) return item;
+
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      })
+    );
+  };
+
   // Calculate totals for the UI
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -62,7 +81,7 @@ export const CartProvider = ({ children }) => {
   return (
     <CartContext.Provider value={{
       cart, addToCart, removeFromCart,
-      clearCart, totalItems, totalPrice,
+      clearCart, updateQuantity, totalItems, totalPrice,
       isOpen, toggleCart
     }}>
       {children}
