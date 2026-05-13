@@ -96,6 +96,12 @@ class ProductRepository {
     });
   }
 
+  // src/modules/products/product.repository.js
+  async findAllCategories() {
+    return await prisma.category.findMany({
+      orderBy: { name: 'asc' }
+    });
+  }
 
 
 }
