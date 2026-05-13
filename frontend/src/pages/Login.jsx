@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { isAuthenticated, saveSession } from '../utils/auth';
+import { isAuthenticated, saveSession, getUser } from '../utils/auth';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
@@ -11,10 +11,15 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // If user already has a valid JWT → skip to dashboard
+    // If user already has a valid JWT → skip to appropriate dashboard
     useEffect(() => {
         if (isAuthenticated()) {
-            navigate('/dashboard', { replace: true });
+            const user = getUser();
+            if (user?.role === 'ADMIN') {
+                navigate('/admin/dashboard', { replace: true });
+            } else {
+                navigate('/dashboard', { replace: true });
+            }
         }
     }, [navigate]);
 
@@ -44,7 +49,13 @@ export default function Login() {
             } else if (data.token) {
                 // Admin shortcut — JWT issued directly, no OTP needed
                 saveSession(data.token, data.user);
-                navigate(data.user?.role === 'ADMIN' ? '/admin' : '/dashboard', { replace: true });
+                
+                // Perform Intelligent Redirect
+                if (data.user?.role === 'ADMIN') {
+                    navigate('/admin/dashboard', { replace: true }); // Send Admins to the Command Center
+                } else {
+                    navigate('/dashboard', { replace: true }); // Send customers to their profile
+                }
             }
         } catch (err) {
             const msg = err.response?.data?.message || 'Login failed. Please try again.';

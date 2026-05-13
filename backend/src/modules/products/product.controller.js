@@ -79,6 +79,23 @@ class ProductController {
       });
     }
   }
+
+  async getCategories(req, res) {
+    try {
+      const categories = await productService.getCategories();
+      res.status(200).json({
+        success: true,
+        data: categories
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to fetch categories." 
+      });
+    }
+  }
+
+
 }
 
 module.exports = new ProductController();

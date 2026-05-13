@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/cartContext";
 import useDebounce from "../../hooks/deBounce";
 import { useState, useEffect } from "react";
+import { getUser } from "../../utils/auth";
 
 
 export default function Navbar({ onSearch }) {
+  const user = getUser();
 
 
   const { totalItems, toggleCart } = useCart();
@@ -42,6 +44,16 @@ export default function Navbar({ onSearch }) {
           <Link to="/support" className="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
             Support
           </Link>
+
+          {/* NEW: Conditional Admin Entry */}
+          {user?.role === 'ADMIN' && (
+            <Link 
+              to="/admin/dashboard" 
+              className="text-orange-500 border border-orange-500/30 px-2 py-0.5 rounded text-[10px] font-black hover:bg-orange-500 hover:text-black transition-all uppercase tracking-widest"
+            >
+              ADMIN_PANEL
+            </Link>
+          )}
         </div>
 
         {/* SEARCH BAR — center position */}

@@ -38,9 +38,10 @@ function App() {
                 } />
 
                 {/* Protected — admin only */}
-                <Route path="/admin" element={
+                <Route path="/admin/dashboard" element={
                     <ProtectedRoute role="ADMIN"><AdminDashboard /></ProtectedRoute>
                 } />
+                <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="/admin/manage-products" element={
                     <ProtectedRoute role="ADMIN"><ManageProducts /></ProtectedRoute>
                 } />

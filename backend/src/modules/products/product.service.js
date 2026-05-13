@@ -88,6 +88,11 @@ class ProductService {
       throw new Error("Target hardware not found in inventory.");
     }
   }
+
+  async getCategories() {
+    return await productRepository.findAllCategories();
+  }
+
 }
 
 module.exports = new ProductService();
