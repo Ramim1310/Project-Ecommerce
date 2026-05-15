@@ -1,11 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/cartContext";
 import useDebounce from "../../hooks/deBounce";
 import { useState, useEffect } from "react";
-import { getUser } from "../../utils/auth";
+import { getUser, clearSession } from "../../utils/auth";
 
 
 export default function Navbar({ onSearch }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const user = getUser();
 
 
@@ -90,15 +92,29 @@ export default function Navbar({ onSearch }) {
 
         {/* USER ACTIONS (Auth Status) */}
         <div className="flex items-center gap-6">
-          <Link to="/login" className="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
-            Login
-          </Link>
-          <Link
-            to="/register"
-            className="bg-cyan-500 hover:bg-white text-black px-5 py-2.5 rounded text-[10px] font-black uppercase tracking-widest transition-all"
-          >
-            Join Nexus
-          </Link>
+          {user ? (
+            <button
+              onClick={() => {
+                clearSession();
+                navigate('/login');
+              }}
+              className="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/login" className="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="bg-cyan-500 hover:bg-white text-black px-5 py-2.5 rounded text-[10px] font-black uppercase tracking-widest transition-all"
+              >
+                Join Nexus
+              </Link>
+            </>
+          )}
         </div>
 
       </div>
