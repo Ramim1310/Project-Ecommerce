@@ -2,10 +2,14 @@ const prisma = require('../../../config/db');
 
 class AdminService {
   async getDashboardStats() {
-    const [totalProducts, totalUsers, totalVariants] = await Promise.all([
+    const [totalProducts, totalUsers, totalVariants, totalOrders, revenueAgg] = await Promise.all([
       prisma.product.count(),
       prisma.user.count(),
       prisma.productVariant.count(),
+      prisma.order.count(),
+      prisma.order.aggregate({
+        _sum: { totalAmount: true }
+      })
     ]);
 
     // Sum up all variant stock for total inventory units
@@ -16,8 +20,8 @@ class AdminService {
     return {
       totalProducts,
       totalUsers,
-      totalOrders: 0,          // Order model not yet implemented
-      revenue: 0,               // Order model not yet implemented
+      totalOrders,
+      revenue: revenueAgg._sum.totalAmount || 0,
       totalVariants,
       totalStock: stockAgg._sum.stock || 0,
     };

@@ -1,11 +1,5 @@
-const { Pool } = require('pg');
-const { PrismaPg } = require('@prisma/adapter-pg');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../../../config/db");
 
-const connectionString = process.env.DATABASE_URL;
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
 
 class ProductRepository {
   /**
@@ -103,7 +97,11 @@ class ProductRepository {
     });
   }
 
-
+  async createCategory(name) {
+    return await prisma.category.create({
+      data: { name }
+    });
+  }
 }
 
 module.exports = new ProductRepository();

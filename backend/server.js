@@ -4,6 +4,7 @@ const cors = require("cors");
 const authRoutes = require("./route/authRoutes");
 const productRoutes = require('./src/modules/products/product.route');
 const adminRoutes = require('./src/modules/admin/admin.route');
+const orderRoutes = require('./src/modules/order/order.route');
 const app = express();
 
 // Middlewares
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.get('/', (req, res) => {
     res.send('Nexus Portal API is running...');

@@ -7,6 +7,7 @@ const requireAdmin = require('../../middleware/requireAdmin');
 
 router.get('/admin-inventory', requireAdmin, productController.getAdminProducts);
 router.get('/categories', productController.getCategories);
+router.post('/categories', requireAdmin, productController.createCategory);
 
 // GET /api/products/catalog
 router.get('/catalog', productController.getCatalog);

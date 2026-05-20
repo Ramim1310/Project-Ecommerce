@@ -95,7 +95,29 @@ class ProductController {
     }
   }
 
-
+  async createCategory(req, res) {
+    try {
+      const { name } = req.body;
+      const category = await productService.createCategory(name);
+      return res.status(201).json({
+        success: true,
+        message: `Category "${category.name}" created successfully.`,
+        data: category
+      });
+    } catch (error) {
+      // Prisma unique constraint violation
+      if (error.code === 'P2002') {
+        return res.status(409).json({
+          success: false,
+          message: "A category with that name already exists."
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
 }
 
 module.exports = new ProductController();

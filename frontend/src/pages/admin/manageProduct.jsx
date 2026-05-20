@@ -7,6 +7,8 @@ export default function ManageProducts() {
     const [inventory, setInventory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
     const [categories, setCategories] = useState([]);
     const [tempSpecs, setTempSpecs] = useState([{ key: '', value: '' }]);
     const [formData, setFormData] = useState({
@@ -20,13 +22,16 @@ export default function ManageProducts() {
         ]
     });
 
-    // Fetch categories on mount for the dropdown
     useEffect(() => {
+        loadCategories();
+    }, []);
+
+    const loadCategories = () => {
         fetch('http://localhost:5001/api/products/categories')
             .then(res => res.json())
             .then(result => setCategories(result.data || []))
             .catch(() => setCategories([]));
-    }, []);
+    };
 
     // Block 1: The Data Fetcher
     const loadInventory = async () => {
@@ -129,6 +134,34 @@ export default function ManageProducts() {
         }
     };
 
+    // Category creation handler
+    const handleCreateCategory = async () => {
+        if (!newCategoryName.trim()) {
+            alert('VALIDATION_ERROR: Category name is required.');
+            return;
+        }
+        try {
+            const response = await fetch('http://localhost:5001/api/products/categories', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify({ name: newCategoryName.trim() })
+            });
+            const result = await response.json();
+            if (result.success) {
+                setNewCategoryName('');
+                setIsCategoryModalOpen(false);
+                loadCategories(); // Refresh dropdown list
+            } else {
+                alert(`CREATION_FAILED: ${result.message}`);
+            }
+        } catch (error) {
+            alert('SYSTEM_ERROR: Could not reach server.');
+        }
+    };
+
 
 
 
@@ -188,9 +221,14 @@ export default function ManageProducts() {
                     <h1 className="text-3xl font-black italic uppercase tracking-tighter">Inventory_Log</h1>
                     <p className="text-gray-500 text-xs font-mono mt-1">TOTAL_UNITS_DETECTED: {inventory.length}</p>
                 </div>
-                <button onClick={() => setIsModalOpen(true)} className="bg-cyan-500 text-black px-6 py-2 font-black uppercase text-xs hover:bg-white transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-                    + Initialize_New_Unit
-                </button>
+                <div className="flex items-center gap-3">
+                    <button onClick={() => setIsCategoryModalOpen(true)} className="bg-amber-500 text-black px-6 py-2 font-black uppercase text-xs hover:bg-white transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                        + Create_Category
+                    </button>
+                    <button onClick={() => setIsModalOpen(true)} className="bg-cyan-500 text-black px-6 py-2 font-black uppercase text-xs hover:bg-white transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                        + Initialize_New_Unit
+                    </button>
+                </div>
             </header>
 
             {isModalOpen && (
@@ -368,6 +406,52 @@ export default function ManageProducts() {
                                 className="bg-cyan-500 text-black px-8 py-2 font-black uppercase text-xs hover:bg-white transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
                             >
                                 [COMMIT_TO_NEXUS]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Category Creation Modal */}
+            {isCategoryModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-[#0a0a0a] border border-gray-800 w-full max-w-md p-8 shadow-2xl">
+                        <h2 className="text-xl font-black uppercase italic mb-6 tracking-tighter">
+                            Register_New_Category
+                        </h2>
+                        <div className="flex flex-col gap-2 mb-8">
+                            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">Category_Name</label>
+                            <input
+                                type="text"
+                                placeholder="e.g. Keyboards"
+                                value={newCategoryName}
+                                className="bg-[#111] border border-gray-800 p-3 text-sm text-white focus:border-amber-500 outline-none transition-all"
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleCreateCategory()}
+                            />
+                        </div>
+                        {/* Existing categories */}
+                        {categories.length > 0 && (
+                            <div className="mb-8">
+                                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-3">Existing_Categories</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {categories.map(cat => (
+                                        <span key={cat.id} className="text-[10px] font-mono text-amber-400 border border-amber-400/30 bg-amber-400/10 rounded px-2 py-1 uppercase">
+                                            {cat.name}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        <div className="flex justify-end gap-4">
+                            <button onClick={() => { setIsCategoryModalOpen(false); setNewCategoryName(''); }} className="text-gray-500 uppercase font-black text-xs px-6 py-2 hover:text-white transition-colors">
+                                [ABORT]
+                            </button>
+                            <button
+                                onClick={handleCreateCategory}
+                                className="bg-amber-500 text-black px-8 py-2 font-black uppercase text-xs hover:bg-white transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)]"
+                            >
+                                [COMMIT_CATEGORY]
                             </button>
                         </div>
                     </div>

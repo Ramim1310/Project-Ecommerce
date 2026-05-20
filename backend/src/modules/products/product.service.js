@@ -93,6 +93,12 @@ class ProductService {
     return await productRepository.findAllCategories();
   }
 
+  async createCategory(name) {
+    if (!name || !name.trim()) {
+      throw new Error("Category name is required.");
+    }
+    return await productRepository.createCategory(name.trim());
+  }
 }
 
 module.exports = new ProductService();
