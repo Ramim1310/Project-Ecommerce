@@ -66,7 +66,7 @@ export default function AdminDashboard() {
 
     const quickLinks = [
         { label: 'Manage Products', desc: 'Add, edit or remove products', icon: '📦', path: '/admin/manage-products' },
-        { label: 'Manage Orders', desc: 'View and update order status', icon: '📋', soon: true },
+        { label: 'Manage Orders', desc: 'View and update order status', icon: '📋', path: '/admin/manage-orders' },
         { label: 'Manage Users', desc: 'View registered customers', icon: '👤', soon: true },
         { label: 'Site Settings', desc: 'Configure store settings', icon: '⚙️', soon: true },
         { label: 'Analytics', desc: 'Sales and traffic reports', icon: '📊', soon: true },

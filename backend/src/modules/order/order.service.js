@@ -1,4 +1,3 @@
-
 const orderRepository = require('./order.repository');
 
 class OrderService {
@@ -11,9 +10,12 @@ class OrderService {
     );
   }
 
-  async getOrderTelemetry() {
-    const orders = await orderRepository.findAllForAdmin();
-    return orders;
+  async getOrderTelemetry({ page = 0 } = {}) {
+    return await orderRepository.findAllForAdmin({ page });
+  }
+
+  async updateOrderStatus(orderId, status) {
+    return await orderRepository.updateStatus(orderId, status);
   }
 }
 

@@ -12,7 +12,6 @@ class AdminService {
       })
     ]);
 
-    // Sum up all variant stock for total inventory units
     const stockAgg = await prisma.productVariant.aggregate({
       _sum: { stock: true },
     });

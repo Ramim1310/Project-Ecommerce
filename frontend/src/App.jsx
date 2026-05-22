@@ -7,6 +7,7 @@ import LoginOtp from './pages/LoginOtp';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import ManageProducts from './pages/admin/manageProduct';
+import ManageOrders from './pages/admin/manageOrders';
 import Catalog from './pages/productCatalog';
 import ProductDetails from './pages/productDetails';
 import Navbar from "./components/common/Navbar";
@@ -44,6 +45,9 @@ function App() {
                 <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="/admin/manage-products" element={
                     <ProtectedRoute role="ADMIN"><ManageProducts /></ProtectedRoute>
+                } />
+                <Route path="/admin/manage-orders" element={
+                    <ProtectedRoute role="ADMIN"><ManageOrders /></ProtectedRoute>
                 } />
 
                 {/* 404 fallback */}

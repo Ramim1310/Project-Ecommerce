@@ -31,7 +31,7 @@ class OrderRepository {
                         create: items.map(item => ({
                             variantId: item.variantId,
                             quantity: item.quantity,
-                            price: item.price
+                            price: parseFloat(item.price)  // Decimal serializes as string; cast to Float
                         }))
                     }
                 },
@@ -52,21 +52,41 @@ class OrderRepository {
         });
     }
 
-    
     async findAllForAdmin({ page } = {}) {
-        // Guard against undefined, NaN, or negative page values
         const safePage = Math.max(0, parseInt(page) || 0);
+        const PER_PAGE = 15;
 
-        return await prisma.order.findMany({
-            take: 10,
-            skip: safePage * 10,
-            include: {
-                user: true,
-                items: {
-                    include: { variant: true }
+        const [orders, total] = await Promise.all([
+            prisma.order.findMany({
+                take: PER_PAGE,
+                skip: safePage * PER_PAGE,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    user: { select: { name: true, email: true } },
+                    items: {
+                        include: {
+                            variant: {
+                                select: {
+                                    variantName: true,
+                                    sku: true,
+                                    product: { select: { name: true } }
+                                }
+                            }
+                        }
+                    }
                 }
-            },
-            orderBy: { createdAt: 'desc' }
+            }),
+            prisma.order.count()
+        ]);
+
+        return { orders, total, page: safePage };
+    }
+
+    async updateStatus(orderId, status) {
+        return await prisma.order.update({
+            where: { id: orderId },
+            data: { status },
+            select: { id: true, status: true, updatedAt: true }
         });
     }
 }

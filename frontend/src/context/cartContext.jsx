@@ -33,6 +33,7 @@ export const CartProvider = ({ children }) => {
       // Add new item if it doesn't exist
       return [...prev, {
         productId: product.id,
+        variantId: variant.id,       // UUID used by the checkout API
         name: product.name,
         brand: product.brand,
         variantName: variant.variantName,

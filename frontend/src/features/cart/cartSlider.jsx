@@ -1,9 +1,51 @@
 import { useCart } from "../../context/cartContext";
+import {getToken} from '../../utils/auth';
+
 
 export default function CartDrawer() {
-  const { cart, isOpen, toggleCart, removeFromCart, updateQuantity, totalPrice } = useCart();
+  const { cart, isOpen, toggleCart, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
 
   if (!isOpen) return null;
+
+ 
+
+  const handleCheckout = async () => {
+    // 1. Format the cart items to match the backend OrderItem schema
+    const orderPayload = {
+        totalAmount: totalPrice,
+        shippingAddress: "Nexus HQ, Cyber City", // Hardcoded for now, you can add a form later
+        items: cart.map(item => ({
+            variantId: item.variantId, // Ensure your cart state tracks the variantId!
+            quantity: item.quantity,
+            price: item.price
+        }))
+    };
+
+    try {
+        const response = await fetch('http://localhost:5001/api/orders/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getToken()}`
+            },
+            body: JSON.stringify(orderPayload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("ORDER PLACED SUCCESSFULLY!");
+            clearCart(); // Empty the cart state
+            toggleCart(); // Close the drawer
+        } else {
+            alert(`CHECKOUT FAILED: ${result.message}`);
+        }
+    } catch (error) {
+        alert("SYSTEM ERROR: Could not reach Nexus servers.");
+    }
+};
+
+  
 
   return (
     <div className="fixed inset-0 z-[100] flex justify-end">
@@ -89,6 +131,7 @@ export default function CartDrawer() {
             <span className="text-white text-2xl font-black">${totalPrice.toFixed(2)}</span>
           </div>
           <button 
+            onClick={handleCheckout}
             disabled={cart.length === 0}
             className="w-full py-4 bg-cyan-500 hover:bg-white text-black font-black uppercase tracking-widest transition-all disabled:bg-gray-800"
           >
