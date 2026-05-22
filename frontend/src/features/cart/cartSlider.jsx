@@ -1,63 +1,80 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/cartContext";
-import {getToken} from '../../utils/auth';
+import { getToken, isAuthenticated } from '../../utils/auth';
 
 
 export default function CartDrawer() {
   const { cart, isOpen, toggleCart, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
+  const navigate = useNavigate();
+  const [loginPrompt, setLoginPrompt] = useState(false);
 
   if (!isOpen) return null;
 
- 
+
 
   const handleCheckout = async () => {
+    // require login before placing an order
+    if (!isAuthenticated()) {
+      setLoginPrompt(true);
+      setTimeout(() => {
+        setLoginPrompt(false);
+        toggleCart();           // close the drawer
+        navigate('/login');     // redirect to login page
+      }, 3500);
+      return;
+    }
+
+
     // 1. Format the cart items to match the backend OrderItem schema
     const orderPayload = {
-        totalAmount: totalPrice,
-        shippingAddress: "Nexus HQ, Cyber City", // Hardcoded for now, you can add a form later
-        items: cart.map(item => ({
-            variantId: item.variantId, // Ensure your cart state tracks the variantId!
-            quantity: item.quantity,
-            price: item.price
-        }))
+      totalAmount: totalPrice,
+      shippingAddress: "Nexus HQ, Cyber City", // Hardcoded for now, you can add a form later
+      items: cart.map(item => ({
+        variantId: item.variantId, // Ensure your cart state tracks the variantId!
+        quantity: item.quantity,
+        price: item.price
+      }))
     };
 
     try {
-        const response = await fetch('http://localhost:5001/api/orders/checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getToken()}`
-            },
-            body: JSON.stringify(orderPayload)
-        });
+      const response = await fetch('http://localhost:5001/api/orders/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: JSON.stringify(orderPayload)
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (result.success) {
-            alert("ORDER PLACED SUCCESSFULLY!");
-            clearCart(); // Empty the cart state
-            toggleCart(); // Close the drawer
-        } else {
-            alert(`CHECKOUT FAILED: ${result.message}`);
-        }
+      if (result.success && result.data) {
+        // result.data contains the SSLCommerz gateway URL
+        window.location.replace(result.data);
+      } else {
+        alert(`CHECKOUT FAILED: ${result.message}`);
+      }
+
     } catch (error) {
-        alert("SYSTEM ERROR: Could not reach Nexus servers.");
+      console.error("Checkout error:", error);
+      alert("SYSTEM ERROR: Could not reach Nexus servers.");
     }
-};
+  };
 
-  
+
 
   return (
     <div className="fixed inset-0 z-[100] flex justify-end">
       {/* Backdrop: Click to close */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={toggleCart}
       ></div>
 
       {/* Drawer Panel */}
       <div className="relative w-full max-w-md bg-[#0a0a0a] border-l border-gray-800 shadow-2xl flex flex-col h-full animate-slide-in">
-        
+
         {/* Header */}
         <div className="p-6 border-b border-gray-800 flex justify-between items-center">
           <h2 className="text-xl font-black uppercase tracking-tighter italic">
@@ -67,6 +84,19 @@ export default function CartDrawer() {
             [CLOSE]
           </button>
         </div>
+
+        {/* Login Required Banner */}
+        {loginPrompt && (
+          <div className="mx-4 mt-4 p-4 rounded-lg border border-cyan-500/50 bg-cyan-500/10 animate-pulse">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔒</span>
+              <div>
+                <p className="text-cyan-400 font-bold uppercase text-sm tracking-wider">Login Required</p>
+                <p className="text-gray-400 text-xs mt-1">You need to log in before placing an order. Redirecting...</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Cart Items List */}
         <div className="flex-grow overflow-y-auto p-6 space-y-6">
@@ -130,7 +160,7 @@ export default function CartDrawer() {
             <span className="text-gray-500 uppercase text-xs font-bold tracking-widest">Total_Value</span>
             <span className="text-white text-2xl font-black">${totalPrice.toFixed(2)}</span>
           </div>
-          <button 
+          <button
             onClick={handleCheckout}
             disabled={cart.length === 0}
             className="w-full py-4 bg-cyan-500 hover:bg-white text-black font-black uppercase tracking-widest transition-all disabled:bg-gray-800"

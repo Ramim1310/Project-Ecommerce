@@ -8,5 +8,7 @@ router.post('/checkout', isAuth, orderController.createOrder);
 
 // Admin Routes
 router.get('/admin-telemetry', isAdmin, orderController.getAdminOrders);
-
+router.post('/payment/success/:id', orderController.paymentSuccess);
+router.post('/payment/fail/:id', orderController.paymentFail);
+router.get('/payment/cancel/:id', orderController.paymentCancel);
 module.exports = router;

@@ -17,6 +17,15 @@ class OrderService {
   async updateOrderStatus(orderId, status) {
     return await orderRepository.updateStatus(orderId, status);
   }
+
+  async confirmPayment(orderId) {
+    return await orderRepository.updateOrderStatus(orderId, 'PROCESSING');
+  }
+
+  async failPayment(orderId) {
+    return await orderRepository.updateOrderStatus(orderId, 'CANCELLED');
+  }
+
 }
 
 module.exports = new OrderService();
