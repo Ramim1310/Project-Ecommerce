@@ -1,29 +1,8 @@
-const prisma = require('../../../config/db');
+const adminRepository = require('./admin.repository');
 
 class AdminService {
-  async getDashboardStats() {
-    const [totalProducts, totalUsers, totalVariants, totalOrders, revenueAgg] = await Promise.all([
-      prisma.product.count(),
-      prisma.user.count(),
-      prisma.productVariant.count(),
-      prisma.order.count(),
-      prisma.order.aggregate({
-        _sum: { totalAmount: true }
-      })
-    ]);
-
-    const stockAgg = await prisma.productVariant.aggregate({
-      _sum: { stock: true },
-    });
-
-    return {
-      totalProducts,
-      totalUsers,
-      totalOrders,
-      revenue: revenueAgg._sum.totalAmount || 0,
-      totalVariants,
-      totalStock: stockAgg._sum.stock || 0,
-    };
+  async getDashboardTelemetry() {
+    return adminRepository.getDashboardTelemetry();
   }
 }
 

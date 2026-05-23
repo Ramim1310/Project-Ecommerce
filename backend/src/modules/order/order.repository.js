@@ -90,12 +90,42 @@ class OrderRepository {
         });
     }
 
-    async updateOrderStatus(id, status) {
-    return await prisma.order.update({
-      where: { id },
-      data: { status }
-    });
-  }
+    async updateOrderStatus(id, status, paymentStatus) {
+        const data = { status };
+        if (paymentStatus) {
+            data.paymentStatus = paymentStatus;
+        }
+        return await prisma.order.update({
+            where: { id },
+            data
+        });
+    }
+
+
+    async findOrdersByUser(userId) {
+        return await prisma.order.findMany({
+            where: { userId },
+           
+            include: {
+                items: {
+                    include: {
+                        variant: {
+                            include: {
+                                product: true // Fetches the parent product name and brand
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+    async findById(id) {
+        return await prisma.order.findUnique({
+            where: { id },
+            include: { items: true }
+        });
+    }
 }
 
 module.exports = new OrderRepository();

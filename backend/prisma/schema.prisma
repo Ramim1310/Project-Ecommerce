@@ -73,6 +73,7 @@ model Order {
   items           OrderItem[]
   totalAmount     Float
   status          OrderStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(UNPAID)
   shippingAddress String
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
@@ -94,4 +95,11 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  FAILED
+  REFUNDED
 }

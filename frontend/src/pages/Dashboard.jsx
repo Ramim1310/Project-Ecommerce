@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated, getUser, clearSession } from '../utils/auth';
 
+
 export default function Dashboard() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -68,11 +69,10 @@ export default function Dashboard() {
                         <div className="text-slate-500 text-[0.9rem] mt-0.5">{user.email}</div>
                         <div className="mt-2">
                             <span
-                                className={`px-3 py-1 rounded-full text-[0.78rem] font-semibold tracking-[0.5px] border ${
-                                    user.role === 'ADMIN'
+                                className={`px-3 py-1 rounded-full text-[0.78rem] font-semibold tracking-[0.5px] border ${user.role === 'ADMIN'
                                         ? 'bg-amber-400/15 border-amber-400/40 text-amber-400'
                                         : 'bg-emerald-400/10 border-emerald-400/30 text-emerald-400'
-                                }`}
+                                    }`}
                             >
                                 {user.role === 'ADMIN' ? '👑 Admin' : '🛒 Customer'}
                             </span>
@@ -82,11 +82,11 @@ export default function Dashboard() {
 
                 {/* Quick action cards */}
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5 mb-10">
-                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
+                    <button  onClick={() => navigate('/orders')} className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
                         <div className="text-2xl mb-3.5">🛒</div>
                         <h3 className="text-base font-semibold mb-1 text-text-primary">My Orders</h3>
                         <p className="text-[0.85rem] text-text-secondary">Track and manage your purchases</p>
-                    </div>
+                    </button>
                     <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
                         <div className="text-2xl mb-3.5">❤️</div>
                         <h3 className="text-base font-semibold mb-1 text-text-primary">Wishlist</h3>

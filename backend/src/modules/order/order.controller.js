@@ -83,38 +83,73 @@ class OrderController {
 
   async paymentSuccess(req, res) {
     try {
-      const { id } = req.params; // The Order ID
-
-      // 1. Update the database to lock the order as paid
+      const { id } = req.params;
+      console.log(`✅ [PaymentSuccess] Order ID: ${id}`);
       await orderService.confirmPayment(id);
-
-      // 2. Redirect the user back to the React Frontend's success page
-      res.redirect(`http://localhost:5173/payment/success/${id}`);
+      console.log(`✅ [PaymentSuccess] DB updated to PAID`);
+      // Redirect straight to orders page — it will show PAID status
+      res.redirect(`http://localhost:5173/orders?payment=success`);
     } catch (error) {
-      console.error("Payment Confirmation Error:", error);
-      res.redirect(`http://localhost:5173/payment/fail`);
+      console.error('❌ [PaymentSuccess] ERROR:', error.message);
+      res.redirect(`http://localhost:5173/orders?payment=fail`);
     }
   }
 
   async paymentFail(req, res) {
     try {
       const { id } = req.params;
-
-      // 1. Mark order as cancelled
+      console.log(`❌ [PaymentFail] Order ID: ${id}`);
       await orderService.failPayment(id);
-
-      // 2. Redirect to frontend failure page
-      res.redirect(`http://localhost:5173/payment/fail`);
     } catch (error) {
-      res.redirect(`http://localhost:5173/payment/fail`);
+      console.error('❌ [PaymentFail] ERROR:', error.message);
     }
+    res.redirect(`http://localhost:5173/orders?payment=fail`);
   }
 
   async paymentCancel(req, res) {
-    // If the user clicks "Cancel" on the gateway page
     const { id } = req.params;
-    await orderService.failPayment(id);
-    res.redirect(`http://localhost:5173/payment/cancel`);
+    console.log(`⚠️ [PaymentCancel] Order ID: ${id}`);
+    try { await orderService.failPayment(id); } catch (_) {}
+    res.redirect(`http://localhost:5173/orders?payment=cancelled`);
+  }
+
+  async getMyOrders(req, res) {
+    try {
+      const userId = req.user.id; 
+      const orders = await orderService.getUserOrders(userId);
+
+      return res.status(200).json({
+        success: true,
+        data: orders
+      });
+    } catch (error) {
+      console.error("Order Fetch Error:", error);
+      return res.status(500).json({ success: false, message: "Failed to retrieve logistics data." });
+    }
+  }
+
+  async reinitiatePayment(req, res) {
+    try {
+      const { id } = req.params;
+      const order = await orderService.getOrderById(id);
+
+      if (!order) {
+        return res.status(404).json({ success: false, message: 'Order not found.' });
+      }
+      // Only allow for the order's own user
+      if (order.userId !== req.user.id) {
+        return res.status(403).json({ success: false, message: 'Forbidden.' });
+      }
+      if (order.paymentStatus === 'PAID') {
+        return res.status(400).json({ success: false, message: 'This order is already paid.' });
+      }
+
+      const gatewayUrl = await paymentService.initiatePayment(order, req.user);
+      return res.status(200).json({ success: true, data: gatewayUrl });
+    } catch (error) {
+      console.error('[OrderController] reinitiatePayment error:', error.message);
+      return res.status(500).json({ success: false, message: 'Failed to reinitiate payment.' });
+    }
   }
 
 }

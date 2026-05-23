@@ -19,11 +19,18 @@ class OrderService {
   }
 
   async confirmPayment(orderId) {
-    return await orderRepository.updateOrderStatus(orderId, 'PROCESSING');
+    return await orderRepository.updateOrderStatus(orderId, 'PROCESSING', 'PAID');
   }
 
   async failPayment(orderId) {
-    return await orderRepository.updateOrderStatus(orderId, 'CANCELLED');
+    return await orderRepository.updateOrderStatus(orderId, 'CANCELLED', 'FAILED');
+  }
+  async getUserOrders(userId) {
+    return await orderRepository.findOrdersByUser(userId);
+  }
+
+  async getOrderById(id) {
+    return await orderRepository.findById(id);
   }
 
 }

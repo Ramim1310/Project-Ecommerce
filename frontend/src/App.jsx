@@ -14,6 +14,7 @@ import Navbar from "./components/common/Navbar";
 import CartDrawer from "./features/cart/cartSlider";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import './index.css';
+import MyOrders from './pages/UserOrders';
 
 function App() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -36,6 +37,9 @@ function App() {
                 {/* Protected — regular users */}
                 <Route path="/dashboard" element={
                     <ProtectedRoute><Dashboard /></ProtectedRoute>
+                } />
+                <Route path="/orders" element={
+                    <ProtectedRoute><MyOrders /></ProtectedRoute>
                 } />
 
                 {/* Protected — admin only */}

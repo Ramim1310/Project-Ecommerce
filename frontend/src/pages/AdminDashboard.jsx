@@ -15,7 +15,7 @@ export default function AdminDashboard() {
 
         // Fetch live stats from backend
         const token = getToken();
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}/admin/stats`, {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}/admin/telemetry`, {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then(res => res.json())
@@ -67,9 +67,9 @@ export default function AdminDashboard() {
     const quickLinks = [
         { label: 'Manage Products', desc: 'Add, edit or remove products', icon: '📦', path: '/admin/manage-products' },
         { label: 'Manage Orders', desc: 'View and update order status', icon: '📋', path: '/admin/manage-orders' },
-        { label: 'Manage Users', desc: 'View registered customers', icon: '👤', soon: true },
+        { label: 'Manage Users', desc: 'View registered customers', icon: '👤', path: '/admin/manage-users' },
         { label: 'Site Settings', desc: 'Configure store settings', icon: '⚙️', soon: true },
-        { label: 'Analytics', desc: 'Sales and traffic reports', icon: '📊', soon: true },
+        { label: 'Analytics', desc: 'Sales and traffic reports', icon: '📊', path: '/admin/analytics' },
         { label: 'Promotions', desc: 'Coupons and discount codes', icon: '🎁', soon: true },
     ];
 

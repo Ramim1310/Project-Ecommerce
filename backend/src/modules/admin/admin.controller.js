@@ -1,12 +1,15 @@
 const adminService = require('./admin.service');
 
-async function getStats(req, res) {
-  try {
-    const stats = await adminService.getDashboardStats();
-    res.json({ success: true, data: stats });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+class AdminController {
+  async getDashboardTelemetry(req, res) {
+    try {
+      const data = await adminService.getDashboardTelemetry();
+      return res.status(200).json({ success: true, data });
+    } catch (error) {
+      console.error('[AdminController] getDashboardTelemetry error:', error.message);
+      return res.status(500).json({ success: false, message: 'Failed to compile system telemetry.' });
+    }
   }
 }
 
-module.exports = { getStats };
+module.exports = new AdminController();
