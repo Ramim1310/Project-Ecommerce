@@ -34,7 +34,6 @@ export default function Register() {
                 email: form.email,
                 password: form.password,
             });
-            // Pass email to verify-otp page via state
             navigate('/verify-otp', { state: { email: form.email, purpose: 'register' } });
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed. Please try again.');
@@ -45,13 +44,12 @@ export default function Register() {
 
     return (
         <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-bg-deep overflow-hidden">
-            {/* Left hero panel */}
             <div className="relative hidden md:flex flex-col justify-center items-center py-16 px-12 bg-bg-card border-r border-border overflow-hidden">
                 <div className="absolute -top-[120px] -left-[120px] w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.25)_0%,transparent_70%)] pointer-events-none"></div>
                 <div className="absolute -bottom-[100px] -right-[100px] w-[350px] h-[350px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.18)_0%,transparent_70%)] pointer-events-none"></div>
                 
                 <div className="text-3xl font-extrabold bg-gradient-to-br from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-3 tracking-tight z-10">
-                    ⚡ Nexus Tech
+                    Nexus Tech
                 </div>
                 <p className="text-text-secondary text-[0.95rem] mb-12 text-center z-10">
                     Your one-stop shop for premium computer components

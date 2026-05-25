@@ -18,12 +18,10 @@ export default function LoginOtp() {
 
     const inputRefs = useRef([]);
 
-    // Redirect if no email passed via state
     useEffect(() => {
         if (!email) navigate('/login');
     }, [email, navigate]);
 
-    // Countdown for resend
     useEffect(() => {
         if (resendCooldown <= 0) return;
         const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000);
@@ -64,7 +62,6 @@ export default function LoginOtp() {
         try {
             const { data } = await axios.post(`${API}/auth/verify-login-otp`, { email, otp });
 
-            // Save JWT + user to localStorage
             saveSession(data.token, data.user);
 
             setSuccess('Login successful! Welcome back 🎉');
@@ -79,9 +76,6 @@ export default function LoginOtp() {
     const handleResend = async () => {
         if (resendCooldown > 0) return;
         try {
-            // Trigger a new login OTP by re-calling login without password check
-            // Backend will re-send OTP if credentials are cached — we need to expose a resend endpoint
-            // For now, direct user back to login
             navigate('/login');
         } catch {
             setError('Failed to resend. Please go back and log in again.');

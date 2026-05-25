@@ -13,6 +13,7 @@ import ProductDetails from './pages/productDetails';
 import Navbar from "./components/common/Navbar";
 import CartDrawer from "./features/cart/cartSlider";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import Analytics from './pages/admin/analytics';
 import './index.css';
 import MyOrders from './pages/UserOrders';
 
@@ -52,6 +53,9 @@ function App() {
                 } />
                 <Route path="/admin/manage-orders" element={
                     <ProtectedRoute role="ADMIN"><ManageOrders /></ProtectedRoute>
+                } />
+                <Route path="/admin/analytics" element={
+                    <ProtectedRoute role="ADMIN"><Analytics /></ProtectedRoute>
                 } />
 
                 {/* 404 fallback */}

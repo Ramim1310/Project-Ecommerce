@@ -41,7 +41,7 @@ export default function MyOrders() {
                     setOrders(result.data);
                 }
             } catch (error) {
-                console.error("Order History Link Failed:", error);
+                console.error('[UserOrders] Failed to fetch orders:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -74,7 +74,7 @@ export default function MyOrders() {
         return stages.indexOf(status);
     };
 
-    if (isLoading) return <div className="p-10 text-cyan-500 font-mono animate-pulse">ESTABLISHING_UPLINK...</div>;
+    if (isLoading) return <div className="p-10 text-cyan-500 font-mono animate-pulse">Loading your orders...</div>;
 
 
     return (
@@ -93,11 +93,11 @@ export default function MyOrders() {
                     </div>
                 )}
 
-                <h1 className="text-3xl font-black uppercase italic tracking-tighter mb-10 text-white">Active_Logistics</h1>
+                <h1 className="text-3xl font-black uppercase italic tracking-tighter mb-10 text-white">My Orders</h1>
 
                 {orders.length === 0 ? (
                     <div className="border border-gray-900 bg-[#0a0a0a] p-10 flex items-center justify-center">
-                        <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">No_Active_Transactions_Detected.</p>
+                        <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">You have no orders yet.</p>
                     </div>
                 ) : (
                     <div className="space-y-12">
@@ -124,7 +124,7 @@ export default function MyOrders() {
                                                 {order.paymentStatus || 'UNPAID'}
                                             </span>
                                         </div>
-                                        <h2 className="text-xl font-black text-gray-100 uppercase tracking-tight">Hardware Requisition</h2>
+                                        <h2 className="text-xl font-black text-gray-100 uppercase tracking-tight">Order Summary</h2>
                                     </div>
                                     <div className="text-right">
                                         <p className="font-mono text-sm text-gray-100 font-bold">${Number(order.totalAmount).toFixed(2)}</p>
@@ -179,7 +179,7 @@ export default function MyOrders() {
                                     <div className="mb-14 flex items-center gap-3 border-l-2 border-red-500 bg-red-500/5 p-4 rounded-r relative z-10 mx-4">
                                         <span className="text-red-500 text-lg">⚠️</span>
                                         <div>
-                                            <h3 className="text-red-500 text-xs font-black uppercase tracking-widest">TRANSACTION ABORTED</h3>
+                                            <h3 className="text-red-500 text-xs font-black uppercase tracking-widest">Order Cancelled</h3>
                                             <p className="text-red-500/60 text-[10px] mt-0.5">The order was cancelled or payment failed.</p>
                                         </div>
                                     </div>
@@ -187,9 +187,7 @@ export default function MyOrders() {
 
                                 {/* Order Items */}
                                 <div className="pt-8 relative z-10">
-                                    <h3 className="text-[10px] text-gray-500 font-mono uppercase mb-5 tracking-widest flex items-center gap-2">
-                                        <span className="text-gray-700">//</span> MANIFEST
-                                    </h3>
+                                    <h3 className="text-[10px] text-gray-500 font-mono uppercase mb-5 tracking-widest flex items-center gap-2">Items</h3>
                                     <div className="space-y-1">
                                         {order.items.map(item => (
                                             <div key={item.id} className="flex justify-between items-center group hover:bg-white/[0.02] p-3 -mx-3 rounded transition-colors">

@@ -7,16 +7,12 @@ class OrderController {
     try {
       // 1. Extract data from the request body
       const { items, totalAmount, shippingAddress } = req.body;
-
-      // 2. Extract the user ID from the verified JWT token (attached by middleware)
       const userId = req.user.id;
 
-      // 3. Basic Validation
       if (!items || items.length === 0) {
         return res.status(400).json({ success: false, message: "Cart payload is empty." });
       }
 
-      // 4. Pass to the Service Layer for the Transaction
       const order = await orderService.processNewOrder({
         userId,
         items,
@@ -33,12 +29,11 @@ class OrderController {
       });
 
     } catch (error) {
-      // Catch specific transaction errors (e.g., our INSUFFICIENT_STOCK error)
       console.error('[OrderController] Checkout error:', error.message);
       if (error.message.includes('INSUFFICIENT_STOCK')) {
         return res.status(409).json({
           success: false,
-          message: "Transaction aborted: One or more items have insufficient stock."
+          message: "One or more items have insufficient stock."
         });
       }
       if (error.message.includes('VARIANT_NOT_FOUND')) {
@@ -84,13 +79,10 @@ class OrderController {
   async paymentSuccess(req, res) {
     try {
       const { id } = req.params;
-      console.log(`✅ [PaymentSuccess] Order ID: ${id}`);
       await orderService.confirmPayment(id);
-      console.log(`✅ [PaymentSuccess] DB updated to PAID`);
-      // Redirect straight to orders page — it will show PAID status
       res.redirect(`http://localhost:5173/orders?payment=success`);
     } catch (error) {
-      console.error('❌ [PaymentSuccess] ERROR:', error.message);
+      console.error('[OrderController] paymentSuccess error:', error.message);
       res.redirect(`http://localhost:5173/orders?payment=fail`);
     }
   }
@@ -98,17 +90,15 @@ class OrderController {
   async paymentFail(req, res) {
     try {
       const { id } = req.params;
-      console.log(`❌ [PaymentFail] Order ID: ${id}`);
       await orderService.failPayment(id);
     } catch (error) {
-      console.error('❌ [PaymentFail] ERROR:', error.message);
+      console.error('[OrderController] paymentFail error:', error.message);
     }
     res.redirect(`http://localhost:5173/orders?payment=fail`);
   }
 
   async paymentCancel(req, res) {
     const { id } = req.params;
-    console.log(`⚠️ [PaymentCancel] Order ID: ${id}`);
     try { await orderService.failPayment(id); } catch (_) {}
     res.redirect(`http://localhost:5173/orders?payment=cancelled`);
   }
@@ -123,8 +113,8 @@ class OrderController {
         data: orders
       });
     } catch (error) {
-      console.error("Order Fetch Error:", error);
-      return res.status(500).json({ success: false, message: "Failed to retrieve logistics data." });
+      console.error('[OrderController] getMyOrders error:', error);
+      return res.status(500).json({ success: false, message: "Failed to retrieve orders." });
     }
   }
 
@@ -136,7 +126,7 @@ class OrderController {
       if (!order) {
         return res.status(404).json({ success: false, message: 'Order not found.' });
       }
-      // Only allow for the order's own user
+      // Only allow the order's owner to retry payment
       if (order.userId !== req.user.id) {
         return res.status(403).json({ success: false, message: 'Forbidden.' });
       }

@@ -3,9 +3,9 @@ const prisma = require("../../../config/db");
 
 class OrderRepository {
     async createOrderWithStockUpdate(userId, items, totalAmount, shippingAddress) {
-        return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx) => {
 
-            // 1. Check stock BEFORE decrementing 
+            // Pre-validate all stock levels before making any writes.
             for (const item of items) {
                 const variant = await tx.productVariant.findUnique({
                     where: { id: item.variantId },
@@ -21,7 +21,6 @@ class OrderRepository {
                 }
             }
 
-            // 2. Create the Order with nested OrderItems
             const order = await tx.order.create({
                 data: {
                     userId,
@@ -38,7 +37,7 @@ class OrderRepository {
                 include: { items: true }
             });
 
-            // 3. Decrement stock sequentially 
+            // Decrement stock only after the order row is committed.
             for (const item of items) {
                 await tx.productVariant.update({
                     where: { id: item.variantId },
@@ -105,14 +104,11 @@ class OrderRepository {
     async findOrdersByUser(userId) {
         return await prisma.order.findMany({
             where: { userId },
-           
             include: {
                 items: {
                     include: {
                         variant: {
-                            include: {
-                                product: true // Fetches the parent product name and brand
-                            }
+                            include: { product: true }
                         }
                     }
                 }

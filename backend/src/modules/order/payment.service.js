@@ -8,10 +8,9 @@ class PaymentService {
         const is_live = false; // true for live, false for testing
 
         const data = {
-            // --- CORE DATA ---
-            total_amount: order.totalAmount || 100, 
+            total_amount: order.totalAmount || 100,
             currency: 'BDT',
-            tran_id: order.id, 
+            tran_id: order.id,
             success_url: `${process.env.ROOT_URL}/api/orders/payment/success/${order.id}`,
             fail_url: `${process.env.ROOT_URL}/api/orders/payment/fail/${order.id}`,
             cancel_url: `${process.env.ROOT_URL}/api/orders/payment/cancel/${order.id}`,
@@ -20,17 +19,13 @@ class PaymentService {
             product_name: 'Nexus Hardware Configuration',
             product_category: 'Electronic',
             product_profile: 'general',
-
-            // --- CUSTOMER DATA ---
             cus_name: user?.name || 'Nexus User',
-            cus_email: user?.email || 'customer@nexustech.com', 
+            cus_email: user?.email || 'customer@nexustech.com',
             cus_add1: order.shippingAddress || 'Dhaka',
             cus_city: 'Dhaka',
-            cus_postcode: '1207', 
+            cus_postcode: '1207',
             cus_country: 'Bangladesh',
             cus_phone: '01711111111',
-            
-            // --- SHIPPING DATA 
             ship_name: user?.name || 'Nexus User',
             ship_add1: order.shippingAddress || 'Dhaka',
             ship_city: 'Dhaka',
@@ -41,12 +36,10 @@ class PaymentService {
         const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
         const apiResponse = await sslcz.init(data);
 
-        console.log("🏦 SSLCOMMERZ RAW RESPONSE:", apiResponse);
-
         if (apiResponse?.GatewayPageURL) {
             return apiResponse.GatewayPageURL;
         } else {
-            throw new Error(`Payment Gateway Handshake Failed: ${apiResponse?.failedreason || 'Unknown API Error'}`);
+            throw new Error(`Payment gateway error: ${apiResponse?.failedreason || 'Unknown error'}`);
         }
     }
 }

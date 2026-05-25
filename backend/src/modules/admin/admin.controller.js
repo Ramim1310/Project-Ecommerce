@@ -7,7 +7,7 @@ class AdminController {
       return res.status(200).json({ success: true, data });
     } catch (error) {
       console.error('[AdminController] getDashboardTelemetry error:', error.message);
-      return res.status(500).json({ success: false, message: 'Failed to compile system telemetry.' });
+      return res.status(500).json({ success: false, message: 'Failed to load dashboard data.' });
     }
   }
 }

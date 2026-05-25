@@ -3,24 +3,21 @@ const prisma = require("../../../config/db");
 
 class ProductRepository {
   /**
-   * Fetches all products including their Atomic SKU variants.
-   * This is our "Single Source of Truth" for product data retrieval.
+   * Fetches all products with their variants, supporting optional filters.
    */
   async findAll(filters = {}) {
     const { category, brand, minPrice, maxPrice, searchTerm } = filters;
 
     return await prisma.product.findMany({
       where: {
-        //search query for product name and brand
         OR: searchTerm ? [
           { name: { contains: searchTerm, mode: 'insensitive' } },
           { brand: { contains: searchTerm, mode: 'insensitive' } },
         ] : undefined,
-        // Standard filters
         brand: brand ? { equals: brand, mode: 'insensitive' } : undefined,
         category: category ? { name: { equals: category, mode: 'insensitive' } } : undefined,
 
-        // Atomic SKU filtering: Only show products where at least one variant matches the price range
+        // Only show products where at least one variant is within the price range.
         variants: {
           some: {
             price: {
@@ -38,8 +35,7 @@ class ProductRepository {
   }
 
   /**
-   * Finds a specific product by its ID.
-   * Useful for the Product Detail Page (PDP) later. 
+   * Finds a single product by ID, used by the product detail page.
    */
   async findById(id) {
     return await prisma.product.findUnique({
@@ -54,16 +50,14 @@ class ProductRepository {
   async findAllForAdmin() {
     return await prisma.product.findMany({
       include: {
-        variants: true,   // We need to see every SKU
-        category: true    // We need to see the category name
+        variants: true,
+        category: true
       },
       orderBy: {
-        createdAt: 'desc' // Newest products at the top
+        createdAt: 'desc'
       }
     });
   }
-
-  // create product from admin
 
   async createProduct(productData, variantsData) {
     return await prisma.product.create({
@@ -74,12 +68,12 @@ class ProductRepository {
         categoryId: productData.categoryId,
         specifications: productData.specifications,
         variants: {
-          create: variantsData // Array of variant objects
+          create: variantsData
         }
       },
       include: {
-        variants: true, // Return the created variants along with the product
-        category: true,   // Return the associated category
+        variants: true,
+        category: true,
       },
     })
   }
@@ -90,7 +84,6 @@ class ProductRepository {
     });
   }
 
-  // src/modules/products/product.repository.js
   async findAllCategories() {
     return await prisma.category.findMany({
       orderBy: { name: 'asc' }

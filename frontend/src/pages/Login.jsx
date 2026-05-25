@@ -11,7 +11,7 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // If user already has a valid JWT → skip to appropriate dashboard
+    // Redirect already-authenticated users to their appropriate dashboard.
     useEffect(() => {
         if (isAuthenticated()) {
             const user = getUser();
@@ -42,20 +42,16 @@ export default function Login() {
             });
 
             if (data.requiresTwoFactor) {
-                // Regular user → 2FA OTP page
                 navigate('/login/verify', {
                     state: { email: form.email, purpose: 'login' },
                 });
             } else if (data.token) {
-                // Admin shortcut — JWT issued directly, no OTP needed
+                // Admin tokens are issued directly without OTP.
                 saveSession(data.token, data.user);
-                
-                // Perform Intelligent Redirect
-                if (data.user?.role === 'ADMIN') {
-                    navigate('/admin/dashboard', { replace: true }); // Send Admins to the Command Center
-                } else {
-                    navigate('/dashboard', { replace: true }); // Send customers to their profile
-                }
+                navigate(
+                    data.user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard',
+                    { replace: true }
+                );
             }
         } catch (err) {
             const msg = err.response?.data?.message || 'Login failed. Please try again.';
