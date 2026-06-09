@@ -26,23 +26,23 @@ export default function Dashboard() {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-bg-deep flex flex-col">
+        <div className="min-h-screen bg-zinc-950 font-sans flex flex-col">
             {/* Navbar */}
-            <nav className="bg-bg-card border-b border-border py-4 px-10 max-md:py-3.5 max-md:px-5 flex items-center justify-between">
-                <span className="text-[1.2rem] font-extrabold bg-gradient-to-br from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                    ⚡ Nexus Tech
+            <nav className="bg-zinc-900/80 border-b border-zinc-800 py-4 px-10 max-md:py-3.5 max-md:px-5 flex items-center justify-between">
+                <span className="text-lg font-bold tracking-tight">
+                    Nexus<span className="text-cyan-500">Tech</span>
                 </span>
-                <div className="flex items-center gap-3 text-text-secondary text-[0.9rem]">
-                    <span className="text-slate-500">{user.email}</span>
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-[0.85rem]">
+                <div className="flex items-center gap-4 text-zinc-400 text-sm">
+                    <span className="hidden sm:inline text-zinc-500">{user.email}</span>
+                    <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-zinc-950 font-bold text-xs">
                         {getInitials(user.name)}
                     </div>
                     <button
                         id="logout-btn"
                         onClick={handleLogout}
-                        className="bg-transparent border border-border text-slate-400 py-1.5 px-3.5 rounded-md cursor-pointer text-[0.85rem] transition-all hover:border-red-400 hover:text-red-400"
+                        className="text-zinc-400 hover:text-red-400 transition-colors text-sm"
                     >
-                        Sign Out
+                        Sign out
                     </button>
                 </div>
             </nav>
@@ -50,77 +50,66 @@ export default function Dashboard() {
             {/* Main content */}
             <main className="flex-1 py-12 px-10 max-w-[1100px] mx-auto w-full max-md:py-8 max-md:px-5">
                 {/* Welcome */}
-                <div className="mb-10">
-                    <h1 className="text-[2rem] font-extrabold mb-1.5 text-text-primary">
-                        Welcome back, <span className="bg-gradient-to-br from-blue-600 to-cyan-500 bg-clip-text text-transparent">{user.name?.split(' ')[0] || 'Shopper'}</span> 👋
+                <div className="mb-10 border-b border-zinc-800 pb-6">
+                    <h1 className="text-2xl font-bold mb-1 text-zinc-100">
+                        Hey, <span className="text-cyan-400">{user.name?.split(' ')[0] || 'there'}</span> 👋
                     </h1>
-                    <p className="text-slate-500 mt-1">
-                        Your session is active. Here's what's happening in your store.
+                    <p className="text-zinc-500 text-sm">
+                        Welcome back to your dashboard.
                     </p>
                 </div>
 
-                {/* Info card */}
-                <div className="bg-gradient-to-br from-blue-600/10 to-cyan-500/10 border border-border rounded-2xl py-7 px-8 mb-9 flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-[1.6rem] font-extrabold text-white shrink-0">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg py-6 px-7 mb-9 flex items-center gap-5">
+                    <div className="w-14 h-14 bg-cyan-500 rounded-full flex items-center justify-center text-xl font-black text-zinc-950 shrink-0">
                         {getInitials(user.name)}
                     </div>
                     <div>
-                        <div className="font-bold text-[1.1rem] text-text-primary">{user.name}</div>
-                        <div className="text-slate-500 text-[0.9rem] mt-0.5">{user.email}</div>
+                        <div className="font-semibold text-base text-zinc-100">{user.name}</div>
+                        <div className="text-zinc-500 text-sm mt-0.5">{user.email}</div>
                         <div className="mt-2">
-                            <span
-                                className={`px-3 py-1 rounded-full text-[0.78rem] font-semibold tracking-[0.5px] border ${user.role === 'ADMIN'
-                                        ? 'bg-amber-400/15 border-amber-400/40 text-amber-400'
-                                        : 'bg-emerald-400/10 border-emerald-400/30 text-emerald-400'
-                                    }`}
-                            >
-                                {user.role === 'ADMIN' ? '👑 Admin' : '🛒 Customer'}
+                            <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full border ${
+                                user.role === 'ADMIN'
+                                    ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400'
+                                    : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                            }`}>
+                                {user.role === 'ADMIN' ? 'Admin' : 'Customer'}
                             </span>
                         </div>
                     </div>
                 </div>
 
-                {/* Quick action cards */}
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5 mb-10">
-                    <button  onClick={() => navigate('/orders')} className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
-                        <div className="text-2xl mb-3.5">🛒</div>
-                        <h3 className="text-base font-semibold mb-1 text-text-primary">My Orders</h3>
-                        <p className="text-[0.85rem] text-text-secondary">Track and manage your purchases</p>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 mb-10">
+                    <button onClick={() => navigate('/orders')} className="bg-zinc-900 border border-zinc-800 rounded-lg py-6 px-5 transition-all hover:border-cyan-500 text-left group">
+                        <div className="text-2xl mb-3">🛒</div>
+                        <h3 className="text-sm font-semibold mb-1 text-zinc-100 group-hover:text-cyan-400 transition-colors">My Orders</h3>
+                        <p className="text-xs text-zinc-500">Track and manage your purchases</p>
                     </button>
-                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
-                        <div className="text-2xl mb-3.5">❤️</div>
-                        <h3 className="text-base font-semibold mb-1 text-text-primary">Wishlist</h3>
-                        <p className="text-[0.85rem] text-text-secondary">Items you're saving for later</p>
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-lg py-6 px-5 transition-all hover:border-cyan-500 group cursor-pointer">
+                        <div className="text-2xl mb-3">❤️</div>
+                        <h3 className="text-sm font-semibold mb-1 text-zinc-100 group-hover:text-cyan-400 transition-colors">Wishlist</h3>
+                        <p className="text-xs text-zinc-500">Items you've saved for later</p>
                     </div>
-                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
-                        <div className="text-2xl mb-3.5">🖥️</div>
-                        <h3 className="text-base font-semibold mb-1 text-text-primary">PC Builder</h3>
-                        <p className="text-[0.85rem] text-text-secondary">Configure your custom build</p>
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-lg py-6 px-5 transition-all hover:border-cyan-500 group cursor-pointer">
+                        <div className="text-2xl mb-3">⚙️</div>
+                        <h3 className="text-sm font-semibold mb-1 text-zinc-100 group-hover:text-cyan-400 transition-colors">Build a PC</h3>
+                        <p className="text-xs text-zinc-500">Design your custom setup</p>
                     </div>
-                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
-                        <div className="text-2xl mb-3.5">🔔</div>
-                        <h3 className="text-base font-semibold mb-1 text-text-primary">Alerts</h3>
-                        <p className="text-[0.85rem] text-text-secondary">Price drops & stock updates</p>
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-lg py-6 px-5 transition-all hover:border-cyan-500 group cursor-pointer">
+                        <div className="text-2xl mb-3">🔔</div>
+                        <h3 className="text-sm font-semibold mb-1 text-zinc-100 group-hover:text-cyan-400 transition-colors">Price Alerts</h3>
+                        <p className="text-xs text-zinc-500">Get notified on price drops</p>
                     </div>
-                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
-                        <div className="text-2xl mb-3.5">⚙️</div>
-                        <h3 className="text-base font-semibold mb-1 text-text-primary">Settings</h3>
-                        <p className="text-[0.85rem] text-text-secondary">Manage your account details</p>
-                    </div>
-                    <div className="bg-bg-card border border-border rounded-2xl py-7 px-6 transition-all hover:border-blue-500 hover:-translate-y-0.5">
-                        <div className="text-2xl mb-3.5">🎁</div>
-                        <h3 className="text-base font-semibold mb-1 text-text-primary">Deals</h3>
-                        <p className="text-[0.85rem] text-text-secondary">Today's best component deals</p>
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-lg py-6 px-5 transition-all hover:border-cyan-500 group cursor-pointer">
+                        <div className="text-2xl mb-3">👤</div>
+                        <h3 className="text-sm font-semibold mb-1 text-zinc-100 group-hover:text-cyan-400 transition-colors">Account</h3>
+                        <p className="text-xs text-zinc-500">Manage your details</p>
                     </div>
                 </div>
 
-                {/* Featured banner */}
-                <div className="bg-gradient-to-br from-[#0f1629] to-[#162040] border border-border rounded-2xl p-9 text-center text-slate-500 text-[0.9rem]">
-                    <div className="text-[2.5rem] mb-3">🚀</div>
-                    <h2 className="text-slate-400 mb-2 text-[1.2rem] font-bold">
-                        Shop Coming Soon
-                    </h2>
-                    <p>The product catalog, cart, and checkout are being built. Stay tuned!</p>
+                <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-8 text-center">
+                    <div className="text-3xl mb-3">🚀</div>
+                    <h2 className="text-zinc-100 font-semibold mb-2">More features coming soon</h2>
+                    <p className="text-zinc-500 text-sm">PC builder, wishlist, and deals are on the way.</p>
                 </div>
             </main>
         </div>

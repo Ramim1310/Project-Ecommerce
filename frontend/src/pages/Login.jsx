@@ -11,7 +11,6 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Redirect already-authenticated users to their appropriate dashboard.
     useEffect(() => {
         if (isAuthenticated()) {
             const user = getUser();
@@ -46,7 +45,6 @@ export default function Login() {
                     state: { email: form.email, purpose: 'login' },
                 });
             } else if (data.token) {
-                // Admin tokens are issued directly without OTP.
                 saveSession(data.token, data.user);
                 navigate(
                     data.user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard',
@@ -72,68 +70,62 @@ export default function Login() {
         }
     };
 
-
     return (
-        <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-bg-deep overflow-hidden">
-            {/* Left hero */}
-            <div className="relative hidden md:flex flex-col justify-center items-center py-16 px-12 bg-bg-card border-r border-border overflow-hidden">
-                <div className="absolute -top-[120px] -left-[120px] w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.25)_0%,transparent_70%)] pointer-events-none"></div>
-                <div className="absolute -bottom-[100px] -right-[100px] w-[350px] h-[350px] rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.18)_0%,transparent_70%)] pointer-events-none"></div>
-                
-                <div className="text-3xl font-extrabold bg-gradient-to-br from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-3 tracking-tight z-10">
-                    ⚡ Nexus Tech
+        <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-zinc-950 font-sans overflow-hidden">
+            {/* Left panel */}
+            <div className="relative hidden md:flex flex-col justify-center items-center py-16 px-12 bg-zinc-900/60 border-r border-zinc-800 overflow-hidden">
+                {/* Accent glow */}
+                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-cyan-500/5 blur-3xl pointer-events-none" />
+
+                <div className="z-10 text-center mb-12">
+                    <div className="text-3xl font-black tracking-tight mb-2">
+                        Nexus<span className="text-cyan-500">Tech</span>
+                    </div>
+                    <p className="text-zinc-500 text-sm">
+                        PC parts for builders who mean it.
+                    </p>
                 </div>
-                <p className="text-text-secondary text-[0.95rem] mb-12 text-center z-10">
-                    Computer parts & components store
-                </p>
-                <div className="flex flex-col gap-4 w-full max-w-[300px] z-10">
-                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
-                        <span className="text-[1.4rem] shrink-0">🔐</span>
-                        <span>2-step login protection</span>
+
+                <div className="flex flex-col gap-3 w-full max-w-[300px] z-10">
+                    <div className="flex items-center gap-3 bg-zinc-800/50 border border-zinc-700/50 rounded-sm px-4 py-3.5 text-sm text-zinc-300">
+                        <span className="text-cyan-500 text-base">🔐</span>
+                        <span>Two-factor login protection</span>
                     </div>
-                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
-                        <span className="text-[1.4rem] shrink-0">🛒</span>
-                        <span>Track your orders instantly</span>
+                    <div className="flex items-center gap-3 bg-zinc-800/50 border border-zinc-700/50 rounded-sm px-4 py-3.5 text-sm text-zinc-300">
+                        <span className="text-cyan-500 text-base">📦</span>
+                        <span>Track your orders in real time</span>
                     </div>
-                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
-                        <span className="text-[1.4rem] shrink-0">⚙️</span>
-                        <span>Build your custom PC</span>
-                    </div>
-                    <div className="flex items-center gap-3.5 bg-white/5 border border-border rounded-md px-4.5 py-3.5 text-[0.9rem] text-text-secondary transition-colors hover:border-blue-500">
-                        <span className="text-[1.4rem] shrink-0">💡</span>
-                        <span>Expert product recommendations</span>
+                    <div className="flex items-center gap-3 bg-zinc-800/50 border border-zinc-700/50 rounded-sm px-4 py-3.5 text-sm text-zinc-300">
+                        <span className="text-cyan-500 text-base">⚙️</span>
+                        <span>Build your custom PC config</span>
                     </div>
                 </div>
             </div>
 
             {/* Right form */}
             <div className="flex items-center justify-center p-8 md:py-12 md:px-10 overflow-y-auto">
-                <div className="w-full max-w-[420px]">
-                    <div className="flex items-center gap-2 mb-8">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-dot" />
-                        <div className="w-2 h-2 rounded-full bg-border" />
-                        <div className="w-2 h-2 rounded-full bg-border" />
+                <div className="w-full max-w-[400px]">
+                    <div className="mb-8">
+                        <h1 className="text-2xl font-bold text-zinc-100 mb-1">Welcome back</h1>
+                        <p className="text-zinc-500 text-sm">
+                            Sign in to your account. We'll send a verification code to your email.
+                        </p>
                     </div>
 
-                    <h1 className="text-[1.75rem] font-bold text-text-primary mb-1.5">Welcome Back</h1>
-                    <p className="text-text-secondary text-[0.9rem] mb-9">
-                        Sign in to your NExus Tech account. A verification code will be sent to your email.
-                    </p>
-
                     {error && (
-                        <div className="px-4 py-3 rounded-sm text-[0.88rem] mb-5 flex items-start gap-2.5 bg-red-400/10 border border-red-400/30 text-error">
-                            <span>⚠</span> {error}
+                        <div className="px-4 py-3 text-sm mb-5 flex items-start gap-2 bg-red-950/30 border border-red-500/40 text-red-400 rounded-sm">
+                            <span className="mt-0.5">⚠</span> {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} noValidate>
                         <div className="mb-5">
-                            <label className="block text-[0.82rem] font-semibold text-text-secondary uppercase tracking-[0.8px] mb-2" htmlFor="login-email">
-                                Email Address
+                            <label className="block text-sm font-medium text-zinc-300 mb-1.5" htmlFor="login-email">
+                                Email address
                             </label>
                             <input
                                 id="login-email"
-                                className="w-full px-4 py-[13px] bg-bg-elevated border border-border rounded-sm text-text-primary text-[0.95rem] outline-none transition-all focus:border-blue-500 focus:shadow-input-focus placeholder-text-muted"
+                                className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-sm text-zinc-100 text-sm outline-none transition-all focus:border-cyan-500 placeholder-zinc-600"
                                 type="email"
                                 name="email"
                                 placeholder="you@example.com"
@@ -143,13 +135,13 @@ export default function Login() {
                             />
                         </div>
 
-                        <div className="mb-5">
-                            <label className="block text-[0.82rem] font-semibold text-text-secondary uppercase tracking-[0.8px] mb-2" htmlFor="login-password">
+                        <div className="mb-7">
+                            <label className="block text-sm font-medium text-zinc-300 mb-1.5" htmlFor="login-password">
                                 Password
                             </label>
                             <input
                                 id="login-password"
-                                className="w-full px-4 py-[13px] bg-bg-elevated border border-border rounded-sm text-text-primary text-[0.95rem] outline-none transition-all focus:border-blue-500 focus:shadow-input-focus placeholder-text-muted"
+                                className="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-sm text-zinc-100 text-sm outline-none transition-all focus:border-cyan-500 placeholder-zinc-600"
                                 type="password"
                                 name="password"
                                 placeholder="Your password"
@@ -161,24 +153,26 @@ export default function Login() {
 
                         <button
                             id="login-submit"
-                            className="inline-flex items-center justify-center gap-2 px-6 py-[13px] mt-2 rounded-sm text-[0.95rem] font-semibold tracking-[0.3px] border-none outline-none transition-all bg-gradient-to-br from-blue-600 to-cyan-500 text-white w-full shadow-btn hover:-translate-y-[1px] hover:shadow-btn-hover active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold outline-none transition-all bg-cyan-500 text-zinc-950 w-full hover:bg-cyan-400 rounded-sm disabled:bg-zinc-700 disabled:text-zinc-500 disabled:cursor-not-allowed"
                             type="submit"
                             disabled={loading}
                         >
                             {loading ? (
                                 <>
-                                    <span className="w-[18px] h-[18px] border-2 border-white/30 border-t-white rounded-full animate-spin-custom" />
-                                    Signing In…
+                                    <span className="w-4 h-4 border-2 border-zinc-950/30 border-t-zinc-950 rounded-full animate-spin" />
+                                    Signing in…
                                 </>
                             ) : (
-                                'Continue →'
+                                'Sign in'
                             )}
                         </button>
                     </form>
 
-                    <p className="text-center mt-7 text-[0.9rem] text-text-secondary">
+                    <p className="text-center mt-6 text-sm text-zinc-500">
                         Don't have an account?{' '}
-                        <Link to="/register" className="text-cyan-400 no-underline transition-colors hover:text-[#67e8f9]">Create one free</Link>
+                        <Link to="/register" className="text-cyan-400 hover:text-cyan-300 transition-colors">
+                            Create one free
+                        </Link>
                     </p>
                 </div>
             </div>

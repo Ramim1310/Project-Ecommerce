@@ -1,118 +1,64 @@
-
 const productService = require('./product.service');
+const asyncHandler = require('../../middleware/asyncHandler');
 
 class ProductController {
- 
-   
-  async getCatalog(req, res) {
-  try {
+  getCatalog = asyncHandler(async (req, res) => {
     const catalog = await productService.getCatalog(req.query);
     return res.status(200).json({ success: true, data: catalog });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
-}
-  async getProductDetails(req, res) {
-    try {
-      const { id } = req.params;
-      const product = await productService.getProductDetails(id);
-      
-      return res.status(200).json({ success: true, data: product });
-    } catch (err) {
-      return res.status(500).json({ success: false, message: "Error fetching product" });
-    }
-  }
+  });
 
- async createProduct(req, res) {
-    try {
-      const productInput = req.body;
-      const createdProduct = await productService.createNewProduct(productInput);
+  getProductDetails = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const product = await productService.getProductDetails(id);
+    return res.status(200).json({ success: true, data: product });
+  });
 
-      return res.status(201).json({
-        success: true,
-        message: "Product created successfully.",
-        data: createdProduct
-      });
-    } catch (error) {
-      return res.status(400).json({ 
-        success: false, 
-        message: error.message 
-      });
-    }
-  }
+  createProduct = asyncHandler(async (req, res) => {
+    const productInput = req.body;
+    const createdProduct = await productService.createNewProduct(productInput);
 
- async getAdminProducts(req, res) {
-    try {
-      const inventory = await productService.getAdminInventory();
-      
-      return res.status(200).json({
-        success: true,
-        count: inventory.length,
-        data: inventory
-      });
-    } catch (error) {
-      return res.status(500).json({ 
-        success: false, 
-        message: "Failed to fetch products." 
-      });
-    }
-  }
-  async deleteProduct(req, res) {
-    try {
-      const { id } = req.params; 
+    return res.status(201).json({
+      success: true,
+      message: "Product created successfully.",
+      data: createdProduct
+    });
+  });
 
-      await productService.removeHardware(id);
+  getAdminProducts = asyncHandler(async (req, res) => {
+    const inventory = await productService.getAdminInventory();
+    return res.status(200).json({
+      success: true,
+      count: inventory.length,
+      data: inventory
+    });
+  });
 
-      return res.status(200).json({
-        success: true,
-        message: "Product deleted successfully."
-      });
-    } catch (error) {
-      return res.status(404).json({
-        success: false,
-        message: error.message
-      });
-    }
-  }
+  deleteProduct = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    await productService.removeHardware(id);
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully."
+    });
+  });
 
-  async getCategories(req, res) {
-    try {
-      const categories = await productService.getCategories();
-      res.status(200).json({
-        success: true,
-        data: categories
-      });
-    } catch (error) {
-      res.status(500).json({ 
-        success: false, 
-        message: "Failed to fetch categories." 
-      });
-    }
-  }
+  getCategories = asyncHandler(async (req, res) => {
+    const categories = await productService.getCategories();
+    res.status(200).json({
+      success: true,
+      data: categories
+    });
+  });
 
-  async createCategory(req, res) {
-    try {
-      const { name } = req.body;
-      const category = await productService.createCategory(name);
-      return res.status(201).json({
-        success: true,
-        message: `Category "${category.name}" created successfully.`,
-        data: category
-      });
-    } catch (error) {
-      // Prisma unique constraint violation
-      if (error.code === 'P2002') {
-        return res.status(409).json({
-          success: false,
-          message: "A category with that name already exists."
-        });
-      }
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-  }
+  createCategory = asyncHandler(async (req, res) => {
+    const { name } = req.body;
+    const category = await productService.createCategory(name);
+    return res.status(201).json({
+      success: true,
+      message: `Category "${category.name}" created successfully.`,
+      data: category
+    });
+  });
 }
 
 module.exports = new ProductController();

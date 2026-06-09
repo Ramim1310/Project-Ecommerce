@@ -22,37 +22,39 @@ export default function Catalog({ searchTerm = "" }) {
     loadData();
   }, [filters, searchTerm]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-nexusAccent animate-pulse font-bold text-2xl tracking-tighter">
-          LOADING THE NEXUS...
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-7xl mx-auto flex gap-10">
-        {/* Sidebar */}
-        <SidebarProduct onFilterChange={setFilters} currentFilters={filters} />
-
-        {/* Main Grid */}
-        <div className="flex-grow">
-          <header className="mb-8">
-            <h1 className="text-3xl font-black italic uppercase">Catalog</h1>
-          </header>
-
-          {loading ? (
-             <div className="text-cyan-500">Updating Nexus Catalog...</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map(p => <ProductCard key={p.id} product={p} />)}
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-8">
+                <div className="w-10 h-10 border-2 border-zinc-800 border-t-cyan-500 rounded-full animate-spin mb-4"></div>
+                <p className="text-zinc-500 text-sm">Loading products…</p>
             </div>
-          )}
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-zinc-950 text-zinc-100 p-8 font-sans">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12">
+                {/* Sidebar */}
+                <SidebarProduct onFilterChange={setFilters} currentFilters={filters} />
+
+                {/* Main Grid */}
+                <div className="flex-grow">
+                    <header className="mb-10 flex items-end justify-between border-b border-zinc-800 pb-4">
+                        <div>
+                            <h1 className="text-2xl font-bold text-zinc-100">All Products</h1>
+                            <p className="text-zinc-500 text-sm mt-1">{products.length} items in stock</p>
+                        </div>
+                    </header>
+
+                    {loading ? (
+                        <div className="text-zinc-500 text-sm animate-pulse">Updating…</div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {products.map(p => <ProductCard key={p.id} product={p} />)}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }

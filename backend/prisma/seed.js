@@ -11,6 +11,8 @@ async function main() {
   // 2. CREATE CATEGORIES
   const mice = await prisma.category.create({ data: { name: 'Mice' } });
   const keyboards = await prisma.category.create({ data: { name: 'Keyboards' } });
+  const audio = await prisma.category.create({ data: { name: 'Audio' } });
+  const monitors = await prisma.category.create({ data: { name: 'Monitors' } });
 
   // 3. CREATE PRODUCT: LOGITECH G PRO X
   await prisma.product.create({
