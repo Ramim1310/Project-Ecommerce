@@ -1,50 +1,47 @@
 # NexusTech
 
-**Zero bottlenecking from browse to checkout.**
+**High-performance hardware. Minimalist software.**
 
-A high-performance, dark-themed e-commerce platform for PC enthusiasts, custom builders, and gamers. NexusTech prioritizes speed, precision, and an uncompromised dark industrial aesthetic.
+A dark-themed e-commerce platform engineered specifically for PC enthusiasts, custom builders, and gamers. NexusTech prioritizes speed, precision, and an uncompromised dark industrial aesthetic.
 
 ## Architecture & Tech Stack
 
 | Layer | Technology | Purpose |
 | --- | --- | --- |
-| **Frontend** | React.js, Vite | High-speed client-side rendering and blazing fast HMR. |
-| **Styling** | Tailwind CSS | Custom dark industrial theme with zero runtime overhead. |
-| **Icons** | Lucide Icons | Clean, consistent vector iconography. |
+| **Frontend** | React.js (v19), Vite | High-speed client-side rendering and blazing fast HMR. |
+| **Styling** | Tailwind CSS (v4) | Custom dark industrial theme with zero runtime overhead. |
+| **Routing** | React Router DOM | Client-side routing for seamless navigation. |
 | **Backend** | Node.js, Express.js | Lightweight, non-blocking REST API architecture. |
-| **Database** | Neon DB (Serverless PostgreSQL) | Highly available relational data storage with instant branching. |
-| **ORM** | Prisma | Type-safe database queries and automated migrations. |
-| **State Management** | Context API / Redux Toolkit | Predictable, centralized cart and user state management. |
+| **Database** | PostgreSQL | Highly available relational data storage. |
+| **ORM** | Prisma | Type-safe database queries, schema management, and automated migrations. |
+| **State Management** | React Context API | Predictable, centralized cart and user state management. |
 
 ## Primary Features
-- **Dynamic inventory browsing** with low-latency search.
-- **Advanced multi-attribute filtering** (by chipset, socket, socket type, wattage).
-- **Persistent shopping cart** across sessions.
-- **Secure checkout pipeline** with payment gateway integration.
-- **Live stock tracking** to prevent overselling.
+- **Dynamic Catalog:** Browse hardware with low-latency search and category filtering.
+- **Persistent Cart:** Context-based shopping cart that updates in real-time.
+- **Secure Authentication:** JWT-based sessions with OTP (One-Time Password) email verification via Nodemailer.
+- **Integrated Payments:** End-to-end secure checkout pipeline via the SSLCommerz payment gateway.
+- **Admin Dashboard:** Dedicated root-access panel for managing products, tracking orders, and viewing store telemetry/analytics (powered by Recharts).
 
 ## Core Architectural Modules
 
-- **Client-Side State Caching:** Aggressive local caching of cart interactions to ensure immediate UI responsiveness without waiting on network roundtrips.
-- **Optimized Query Indexing:** Critical PostgreSQL tables (products, categories, orders) are indexed to deliver lightning-fast catalog searches and complex multi-attribute filtering.
-- **Dynamic Specification Rendering:** Hardware specifications are handled via a flexible schema, allowing the UI to dynamically render product attributes without hardcoding component types.
-- **Persistent Cart Pipeline:** Cart state is securely synchronized between local storage and the backend database, ensuring session continuity across devices.
+- **React Context State:** Cart interactions and user sessions are managed via lightweight, native Context providers rather than heavy third-party libraries.
+- **Relational Integrity:** PostgreSQL handles complex relations between Users, Products, Variants, and Orders, ensuring data consistency across the platform.
+- **Modular Backend:** The Express backend is split into distinct service modules (Auth, Products, Orders, Admin) for clean separation of concerns and maintainability.
 
-## Engineering Challenges & Solutions
+## Engineering Implementations
 
-### Challenge 1: Handling Race Conditions in Inventory Management
-In a high-demand hardware market, multiple users attempting to purchase the last available unit (e.g., an RTX 5090) simultaneously can result in overselling.
-**Solution:** We utilize strict database transactions within Prisma. Inventory checks and decrements are wrapped in atomic transactions. If the requested quantity exceeds the available stock during the commit phase, the transaction rolls back, and the client is immediately notified, guaranteeing inventory integrity.
+### OTP Verification Flow
+To ensure account security and validity, the registration and login flows incorporate email-based OTP verification. Nodemailer handles the dispatch of verification codes, ensuring that only verified users can place orders or access sensitive account details.
 
-### Challenge 2: Heavy Asset & Image Optimization
-High-resolution hardware imagery is notoriously heavy and can easily degrade Lighthouse performance scores.
-**Solution:** The application enforces modern image formats (WebP/AVIF) and implements native lazy-loading for all non-critical assets below the fold. Product catalog grids utilize placeholder blurring and suspense boundaries to maintain a layout shift score (CLS) of near zero while images fetch asynchronously.
+### Payment Gateway Integration
+The checkout process integrates directly with the SSLCommerz API. The backend manages the secure handshake, payment initiation, and asynchronous callback verification to ensure orders are only marked "PAID" upon cryptographic confirmation from the gateway.
 
 ## Local Development & Environment Configuration
 
 ### Prerequisites
 - Node.js (v18+)
-- PostgreSQL instance (or Neon DB connection string)
+- PostgreSQL instance running locally or remotely
 
 ### 1. Clone & Install
 
@@ -63,13 +60,18 @@ npm install
 Create a `.env` file in the `/backend` directory:
 ```env
 PORT=5001
-DATABASE_URL="postgresql://user:password@host:port/database?sslmode=require"
+DATABASE_URL="postgresql://user:password@localhost:5432/nexustech"
 JWT_SECRET="your_super_secure_jwt_secret"
+SMTP_USER="your_email@gmail.com"
+SMTP_PASS="your_app_password"
+STORE_ID="sslcommerz_store_id"
+STORE_PASS="sslcommerz_store_pass"
+FRONTEND_URL="http://localhost:5173"
 ```
 
-Run database migrations and start the server:
+Run database migrations and start the development server:
 ```bash
-npx prisma migrate dev
+npx prisma db push
 npm run dev
 ```
 
@@ -92,6 +94,6 @@ npm run dev
 
 ## Performance & Security Best Practices
 
-- **Database Connection Pooling:** Utilizes connection pooling to maintain stable database connections during high traffic spikes, preventing connection exhaustion.
-- **Input Sanitization:** All incoming API payloads are strictly validated and sanitized to mitigate SQL injection (SQLi) and Cross-Site Scripting (XSS) attacks.
-- **Secure Password Hashing:** Passwords are cryptographically hashed using bcrypt with an appropriate work factor before persistence. JSON Web Tokens (JWT) are used for stateless, secure session management.
+- **Input Validation:** Incoming API payloads are checked to prevent malformed data from reaching the database.
+- **Secure Password Hashing:** Passwords are cryptographically hashed using bcrypt before persistence.
+- **Stateless Authentication:** JSON Web Tokens (JWT) are used for secure session management without server-side memory overhead.
