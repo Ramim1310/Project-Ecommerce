@@ -5,11 +5,10 @@ class ProductRepository {
   /**
    * Fetches all products with their variants, supporting optional filters.
    */
-  async findAll(filters = {}) {
+  async findAll(filters = {}, skip = 0, take = 9) {
     const { category, brand, minPrice, maxPrice, searchTerm } = filters;
 
-    return await prisma.product.findMany({
-      where: {
+    const where = {
         OR: searchTerm ? [
           { name: { contains: searchTerm, mode: 'insensitive' } },
           { brand: { contains: searchTerm, mode: 'insensitive' } },
@@ -26,12 +25,23 @@ class ProductRepository {
             },
           },
         },
-      },
-      include: {
-        variants: true,
-        category: true,
-      },
-    });
+      };
+
+    const [total, products] = await prisma.$transaction([
+      prisma.product.count({ where }),
+      prisma.product.findMany({
+        where,
+        skip,
+        take,
+        include: {
+          variants: true,
+          category: true,
+        },
+        orderBy: { createdAt: 'desc' }
+      })
+    ]);
+
+    return { total, products };
   }
 
   /**

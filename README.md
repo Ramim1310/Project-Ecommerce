@@ -28,8 +28,12 @@ A dark-themed e-commerce platform engineered specifically for PC enthusiasts, cu
 - **React Context State:** Cart interactions and user sessions are managed via lightweight, native Context providers rather than heavy third-party libraries.
 - **Relational Integrity:** PostgreSQL handles complex relations between Users, Products, Variants, and Orders, ensuring data consistency across the platform.
 - **Modular Backend:** The Express backend is split into distinct service modules (Auth, Products, Orders, Admin) for clean separation of concerns and maintainability.
+- **Optimized Data Fetching:** The product catalog utilizes server-side pagination to ensure instant load times and reduced database strain, dynamically fetching subsets of hardware specifications as users navigate.
 
 ## Engineering Implementations
+
+### Search Debouncing
+To provide instant search feedback without overwhelming the backend with queries on every keystroke, the global search bar implements a custom debounce hook. This delays API calls until the user pauses typing (500ms threshold), drastically reducing unnecessary database load while maintaining a highly responsive UI.
 
 ### OTP Verification Flow
 To ensure account security and validity, the registration and login flows incorporate email-based OTP verification. Nodemailer handles the dispatch of verification codes, ensuring that only verified users can place orders or access sensitive account details.

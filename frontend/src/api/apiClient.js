@@ -12,9 +12,9 @@ export const fetchCatalog = async (filters = {}) => {
     if (!response.ok) throw new Error("Network response was not ok");
     
     const result = await response.json();
-    return result.data;
+    return { data: result.data, pagination: result.pagination };
   } catch (error) {
     console.error("API Fetch Error:", error);
-    return [];
+    return { data: [], pagination: { total: 0, page: 1, limit: 9, totalPages: 1 } };
   }
 };

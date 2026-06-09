@@ -4,7 +4,7 @@ const asyncHandler = require('../../middleware/asyncHandler');
 class ProductController {
   getCatalog = asyncHandler(async (req, res) => {
     const catalog = await productService.getCatalog(req.query);
-    return res.status(200).json({ success: true, data: catalog });
+    return res.status(200).json({ success: true, ...catalog });
   });
 
   getProductDetails = asyncHandler(async (req, res) => {

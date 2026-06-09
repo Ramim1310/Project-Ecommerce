@@ -12,9 +12,13 @@ class ProductService {
         searchTerm: query.search
         };
 
-        const products = await productRepository.findAll(filters);
+        const page = Math.max(1, parseInt(query.page) || 1);
+        const limit = Math.max(1, parseInt(query.limit) || 9);
+        const skip = (page - 1) * limit;
 
-        return products.map(product => {
+        const { total, products } = await productRepository.findAll(filters, skip, limit);
+
+        const formattedProducts = products.map(product => {
             const primaryImage = product.variants[0]?.images[0] || 'https://placehold.co/400x300';
             const prices = product.variants.map(v => Number(v.price));
             const minPrice = Math.min(...prices);
@@ -31,6 +35,16 @@ class ProductService {
                 isInStock: product.variants.some(v => v.stock > 0)
             };
         });
+
+        return {
+            data: formattedProducts,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        };
     }
 
 
