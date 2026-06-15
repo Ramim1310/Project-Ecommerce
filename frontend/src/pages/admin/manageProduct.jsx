@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getToken } from '../../utils/auth';
+import API from '../../api/apiClient';
 import FormField from '../../components/ui/FormField';
 import AdminButton from '../../components/ui/AdminButton';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
-
 const INPUT_CLASS =
     'bg-[#111] border border-gray-800 p-3 text-sm text-white focus:border-cyan-500 outline-none transition-all';
 
@@ -33,19 +30,16 @@ export default function ManageProducts() {
     }, []);
 
     const loadCategories = () => {
-        fetch(`${API}/products/categories`)
-            .then(res => res.json())
-            .then(result => setCategories(result.data || []))
+        API.get('/products/categories')
+            .then(res => setCategories(res.data.data || []))
             .catch(() => setCategories([]));
     };
 
     const loadInventory = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${API}/products/admin-inventory`, {
-                headers: { 'Authorization': `Bearer ${getToken()}` }
-            });
-            const result = await response.json();
+            const response = await API.get('/products/admin-inventory');
+            const result = response.data;
             if (result.success) {
                 setInventory(result.data);
             }
@@ -65,11 +59,8 @@ export default function ManageProducts() {
         if (!confirmed) return;
 
         try {
-            const response = await fetch(`${API}/products/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${getToken()}` }
-            });
-            if (response.ok) {
+            const response = await API.delete(`/products/${id}`);
+            if (response.status === 200 || response.status === 204) {
                 loadInventory();
             }
         } catch (error) {
@@ -104,15 +95,8 @@ export default function ManageProducts() {
         const submissionData = { ...formData, specifications: finalSpecs };
 
         try {
-            const response = await fetch(`${API}/products/create`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`
-                },
-                body: JSON.stringify(submissionData)
-            });
-            const result = await response.json();
+            const response = await API.post('/products/create', submissionData);
+            const result = response.data;
 
             if (result.success) {
                 setFormData({
@@ -138,15 +122,8 @@ export default function ManageProducts() {
             return;
         }
         try {
-            const response = await fetch(`${API}/products/categories`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`
-                },
-                body: JSON.stringify({ name: newCategoryName.trim() })
-            });
-            const result = await response.json();
+            const response = await API.post('/products/categories', { name: newCategoryName.trim() });
+            const result = response.data;
             if (result.success) {
                 setNewCategoryName('');
                 setIsCategoryModalOpen(false);

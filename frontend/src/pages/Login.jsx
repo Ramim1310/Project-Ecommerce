@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/apiClient';
 import { isAuthenticated, saveSession, getUser } from '../utils/auth';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -35,7 +33,7 @@ export default function Login() {
 
         setLoading(true);
         try {
-            const { data } = await axios.post(`${API}/auth/login`, {
+            const { data } = await API.post('/auth/login', {
                 email: form.email,
                 password: form.password,
             });

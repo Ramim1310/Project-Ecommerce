@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/cartContext";
-import { getToken, isAuthenticated } from '../../utils/auth';
+import { isAuthenticated } from '../../utils/auth';
+import API from '../../api/apiClient';
 
 
 export default function CartDrawer() {
@@ -37,16 +38,8 @@ export default function CartDrawer() {
     };
 
     try {
-      const response = await fetch('http://localhost:5001/api/orders/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getToken()}`
-        },
-        body: JSON.stringify(orderPayload)
-      });
-
-      const result = await response.json();
+      const response = await API.post('/orders/checkout', orderPayload);
+      const result = response.data;
 
       if (result.success && result.data) {
         window.location.replace(result.data);

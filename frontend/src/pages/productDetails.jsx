@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCart } from "../context/cartContext";
+import API from '../api/apiClient';
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -12,9 +13,8 @@ export default function ProductDetails() {
   useEffect(() => {
     const getDetails = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}/products/${id}`);
-        if (!response.ok) throw new Error(`Server responded with ${response.status}`);
-        const result = await response.json();
+        const response = await API.get(`/products/${id}`);
+        const result = response.data;
         setProduct(result.data);
         setSelectedVariant(result.data.variants.find(v => v.isDefault) || result.data.variants[0]);
       } catch (err) {

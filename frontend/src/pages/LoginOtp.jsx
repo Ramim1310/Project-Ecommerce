@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/apiClient';
 import { saveSession } from '../utils/auth';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 export default function LoginOtp() {
     const navigate = useNavigate();
@@ -60,7 +58,7 @@ export default function LoginOtp() {
 
         setLoading(true);
         try {
-            const { data } = await axios.post(`${API}/auth/verify-login-otp`, { email, otp });
+            const { data } = await API.post('/auth/verify-login-otp', { email, otp });
 
             saveSession(data.token, data.user);
 

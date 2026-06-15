@@ -1,9 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getToken, getUser, clearSession } from '../../utils/auth';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
-
+import { getUser, clearSession } from '../../utils/auth';
+import API from '../../api/apiClient';
 const STATUS_CONFIG = {
   PENDING:    { label: 'Pending',    color: 'text-amber-400',  bg: 'bg-amber-400/10  border-amber-400/30',  dot: 'bg-amber-400'  },
   PROCESSING: { label: 'Processing', color: 'text-blue-400',   bg: 'bg-blue-400/10   border-blue-400/30',   dot: 'bg-blue-400'   },
@@ -30,10 +28,8 @@ export default function ManageOrders() {
   const fetchOrders = useCallback(async (p = 0) => {
     setLoading(true);
     try {
-      const res  = await fetch(`${API}/admin/orders?page=${p}`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      const json = await res.json();
+      const res = await API.get(`/admin/orders?page=${p}`);
+      const json = res.data;
       if (json.success) {
         setOrders(json.data.orders);
         setTotal(json.data.total);
@@ -49,12 +45,8 @@ export default function ManageOrders() {
   const handleStatusChange = async (orderId, newStatus) => {
     setUpdating(orderId);
     try {
-      const res  = await fetch(`${API}/admin/orders/${orderId}/status`, {
-        method:  'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-        body:    JSON.stringify({ status: newStatus }),
-      });
-      const json = await res.json();
+      const res = await API.patch(`/admin/orders/${orderId}/status`, { status: newStatus });
+      const json = res.data;
       if (json.success) {
         setOrders(prev =>
           prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o)

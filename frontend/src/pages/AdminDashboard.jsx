@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUser, getToken } from '../utils/auth';
+import { getUser } from '../utils/auth';
+import API from '../api/apiClient';
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
@@ -12,13 +13,9 @@ export default function AdminDashboard() {
         setAdmin(getUser());
 
         // Fetch live stats from backend
-        const token = getToken();
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}/admin/telemetry`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then(res => res.json())
-            .then(json => {
-                if (json.success) setStatsData(json.data);
+        API.get('/admin/telemetry')
+            .then(res => {
+                if (res.data.success) setStatsData(res.data.data);
             })
             .catch(() => {})
             .finally(() => setStatsLoading(false));

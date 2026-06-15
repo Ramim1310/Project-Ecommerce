@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getToken } from '../../utils/auth';
+import API from '../../api/apiClient';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
@@ -27,10 +27,8 @@ export default function Analytics() {
   useEffect(() => {
     const fetchTelemetry = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/admin/telemetry', {
-          headers: { 'Authorization': `Bearer ${getToken()}` }
-        });
-        const result = await response.json();
+        const response = await API.get('/admin/telemetry');
+        const result = response.data;
         if (result.success) {
           setTelemetry(result.data);
         }

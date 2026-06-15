@@ -1,16 +1,15 @@
 // src/features/products/FilterSidebar.jsx
 import { useState, useEffect } from 'react';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import API from '../../api/apiClient';
 
 export default function FilterSidebar({ onFilterChange, currentFilters }) {
   const brands = ["Logitech", "Razer", "Corsair", "SteelSeries"];
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/products/categories`)
-      .then(res => res.json())
-      .then(result => {
+    API.get('/products/categories')
+      .then(res => {
+        const result = res.data;
         if (result.success && result.data) {
           setCategories(result.data.map(cat => cat.name));
         }

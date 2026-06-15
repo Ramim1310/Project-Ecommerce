@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getToken } from '../utils/auth';
-
+import API from '../api/apiClient';
 export default function MyOrders() {
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -33,10 +32,8 @@ export default function MyOrders() {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/orders/my-orders', {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-                const result = await response.json();
+                const response = await API.get('/orders/my-orders');
+                const result = response.data;
                 if (result.success) {
                     setOrders(result.data);
                 }
@@ -52,11 +49,8 @@ export default function MyOrders() {
     const handleReinitiatePayment = async (orderId) => {
         setPayingOrderId(orderId);
         try {
-            const response = await fetch(`http://localhost:5001/api/orders/reinitiate/${orderId}`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${getToken()}` }
-            });
-            const result = await response.json();
+            const response = await API.post(`/orders/reinitiate/${orderId}`);
+            const result = response.data;
             if (result.success && result.data) {
                 window.location.replace(result.data);
             } else {

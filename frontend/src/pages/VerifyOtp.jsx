@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+import API from '../api/apiClient';
 
 export default function VerifyOtp() {
     const navigate = useNavigate();
@@ -64,7 +62,7 @@ export default function VerifyOtp() {
 
         setLoading(true);
         try {
-            await axios.post(`${API}/auth/verify-otp`, { email, otp });
+            await API.post('/auth/verify-otp', { email, otp });
             setSuccess('Email verified! Redirecting to login…');
             setTimeout(() => navigate('/login'), 1800);
         } catch (err) {
@@ -77,7 +75,7 @@ export default function VerifyOtp() {
     const handleResend = async () => {
         if (resendCooldown > 0) return;
         try {
-            await axios.post(`${API}/auth/resend-otp`, { email });
+            await API.post('/auth/resend-otp', { email });
             setSuccess('A new code has been sent to your email.');
             setResendCooldown(60);
         } catch (err) {

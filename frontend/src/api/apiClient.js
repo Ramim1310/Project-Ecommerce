@@ -1,17 +1,35 @@
-const BASE_URL = "http://localhost:5001/api";
+import axios from 'axios';
+import { getToken } from '../utils/auth';
+
+const API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001/api",
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+
+API.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export default API;
 
 
 export const fetchCatalog = async (filters = {}) => {
   try {
-    //  Convert the filters object into a URL search string
-    
     const queryParams = new URLSearchParams(filters).toString();
-    const url = `${BASE_URL}/products/catalog${queryParams ? `?${queryParams}` : ""}`;
-
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Network response was not ok");
+    const url = `/products/catalog${queryParams ? `?${queryParams}` : ""}`;
     
-    const result = await response.json();
+    const response = await API.get(url);
+    const result = response.data;
     return { data: result.data, pagination: result.pagination };
   } catch (error) {
     console.error("API Fetch Error:", error);
