@@ -6,9 +6,6 @@ const prisma = require('../config/db');
 const { otpMailer } = require('../config/otpMailer');
 
 
-// ─────────────────────────────────────────
-// POST /api/auth/register
-// ─────────────────────────────────────────
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -17,21 +14,17 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ message: 'Name, email and password are required.' });
         }
 
-        // Check for existing user
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
             return res.status(409).json({ message: 'An account with this email already exists.' });
         }
 
-        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 min
 
-        // Create user (unverified)
         await prisma.user.create({
             data: {
                 name,
@@ -43,7 +36,6 @@ router.post('/register', async (req, res) => {
             },
         });
 
-        // Send verification OTP
         await otpMailer(email, otp, 'register');
 
         res.status(201).json({
@@ -58,9 +50,6 @@ router.post('/register', async (req, res) => {
 });
 
 
-// ─────────────────────────────────────────
-// POST /api/auth/verify-otp   (registration verification)
-// ─────────────────────────────────────────
 router.post('/verify-otp', async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -82,7 +71,6 @@ router.post('/verify-otp', async (req, res) => {
             return res.status(400).json({ message: 'Verification code has expired. Please request a new one.' });
         }
 
-        // Mark user as verified & clear OTP
         await prisma.user.update({
             where: { email },
             data: { isVerified: true, otp: null, otpExpires: null },
@@ -97,9 +85,6 @@ router.post('/verify-otp', async (req, res) => {
 });
 
 
-// ─────────────────────────────────────────
-// POST /api/auth/resend-otp   (resend registration OTP)
-// ─────────────────────────────────────────
 router.post('/resend-otp', async (req, res) => {
     try {
         const { email } = req.body;
@@ -128,8 +113,6 @@ router.post('/resend-otp', async (req, res) => {
 
 
 
-// POST /api/auth/login   (Step 1 — credentials check, send 2FA OTP)
-
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -138,9 +121,6 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required.' });
         }
 
-        // ─── ADMIN SHORTCUT ──────────────────────────────────────────
-        // Hardcoded admin credentials live only in .env (never in source code).
-        // Admin bypasses OTP entirely and gets a JWT directly.
         if (
             process.env.ADMIN_EMAIL &&
             email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase()
@@ -162,7 +142,6 @@ router.post('/login', async (req, res) => {
                 user: { id: 'admin', name: 'Admin', email, role: 'ADMIN' },
             });
         }
-        // ─────────────────────────────────────────────────────────────
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
@@ -182,7 +161,6 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
 
-        // Issue JWT (7 day session)
         const token = jwt.sign(
             { id: user.id, email: user.email, name: user.name, role: user.role },
             process.env.JWT_SECRET,
@@ -207,10 +185,6 @@ router.post('/login', async (req, res) => {
 });
 
 
-
-// ─────────────────────────────────────────
-// POST /api/auth/verify-login-otp  (Step 2 — verify 2FA & issue JWT)
-// ─────────────────────────────────────────
 router.post('/verify-login-otp', async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -226,13 +200,11 @@ router.post('/verify-login-otp', async (req, res) => {
             return res.status(400).json({ message: 'Login code has expired. Please log in again.' });
         }
 
-        // Clear OTP
         await prisma.user.update({
             where: { email },
             data: { otp: null, otpExpires: null },
         });
 
-        // Issue JWT (7 day session)
         const token = jwt.sign(
             { id: user.id, email: user.email, name: user.name, role: user.role },
             process.env.JWT_SECRET,
@@ -256,10 +228,6 @@ router.post('/verify-login-otp', async (req, res) => {
     }
 });
 
-
-// ─────────────────────────────────────────
-// POST /api/auth/me  (validate JWT & return user info)
-// ─────────────────────────────────────────
 router.get('/me', async (req, res) => {
     try {
         const authHeader = req.headers.authorization;

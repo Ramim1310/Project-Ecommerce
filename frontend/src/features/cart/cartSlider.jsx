@@ -26,12 +26,11 @@ export default function CartDrawer() {
     }
 
 
-    // 1. Format the cart items to match the backend OrderItem schema
     const orderPayload = {
       totalAmount: totalPrice,
       shippingAddress: "Nexus HQ, Cyber City", // Hardcoded for now, you can add a form later
       items: cart.map(item => ({
-        variantId: item.variantId, // Ensure your cart state tracks the variantId!
+        variantId: item.variantId,
         quantity: item.quantity,
         price: item.price
       }))
@@ -50,15 +49,14 @@ export default function CartDrawer() {
       const result = await response.json();
 
       if (result.success && result.data) {
-        // result.data contains the SSLCommerz gateway URL
         window.location.replace(result.data);
       } else {
-        alert(`CHECKOUT FAILED: ${result.message}`);
+        alert(`Checkout failed: ${result.message}`);
       }
 
     } catch (error) {
       console.error("Checkout error:", error);
-      alert("SYSTEM ERROR: Could not reach Nexus servers.");
+      alert("Could not reach servers. Please try again.");
     }
   };
 
@@ -78,10 +76,10 @@ export default function CartDrawer() {
         {/* Header */}
         <div className="p-6 border-b border-gray-800 flex justify-between items-center">
           <h2 className="text-xl font-black uppercase tracking-tighter italic">
-            Your <span className="text-cyan-500">Rig_</span>
+            Your <span className="text-cyan-500">Cart</span>
           </h2>
           <button onClick={toggleCart} className="text-gray-500 hover:text-white transition-colors">
-            [CLOSE]
+            Close
           </button>
         </div>
 
@@ -102,7 +100,7 @@ export default function CartDrawer() {
         <div className="flex-grow overflow-y-auto p-6 space-y-6">
           {cart.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-gray-600 font-mono text-sm uppercase">Empty_Inventory</p>
+              <p className="text-gray-600 font-mono text-sm uppercase">Your cart is empty</p>
             </div>
           ) : (
             cart.map((item) => (
@@ -157,7 +155,7 @@ export default function CartDrawer() {
         {/* Footer: Totals and Checkout */}
         <div className="p-6 border-t border-gray-800 bg-[#0d0d0d]">
           <div className="flex justify-between mb-6">
-            <span className="text-gray-500 uppercase text-xs font-bold tracking-widest">Total_Value</span>
+            <span className="text-gray-500 uppercase text-xs font-bold tracking-widest">Total</span>
             <span className="text-white text-2xl font-black">${totalPrice.toFixed(2)}</span>
           </div>
           <button
@@ -165,7 +163,7 @@ export default function CartDrawer() {
             disabled={cart.length === 0}
             className="w-full py-4 bg-cyan-500 hover:bg-white text-black font-black uppercase tracking-widest transition-all disabled:bg-gray-800"
           >
-            Initiate_Checkout
+            Checkout
           </button>
         </div>
       </div>

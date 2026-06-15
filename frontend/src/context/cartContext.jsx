@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  // Initialize from localStorage so the cart doesn't disappear on refresh
+
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('nexus_cart');
     return saved ? JSON.parse(saved) : [];
@@ -15,11 +15,11 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, variant, quantity = 1) => {
     setCart((prev) => {
-      // Check if this specific SKU is already in the cart
+
       const existingItem = prev.find((item) => item.sku === variant.sku);
 
       if (existingItem) {
-        // Validation: Don't exceed stock
+
         const newQty = existingItem.quantity + quantity;
         if (newQty > variant.stock) return prev;
 
@@ -29,11 +29,9 @@ export const CartProvider = ({ children }) => {
       }
 
 
-
-      // Add new item if it doesn't exist
       return [...prev, {
         productId: product.id,
-        variantId: variant.id,       // UUID used by the checkout API
+        variantId: variant.id,
         name: product.name,
         brand: product.brand,
         variantName: variant.variantName,
@@ -58,10 +56,8 @@ export const CartProvider = ({ children }) => {
         if (item.sku === sku) {
           const newQty = item.quantity + delta;
 
-          // 1. Min Boundary: Don't go below 1
           if (newQty < 1) return item;
 
-          // 2. Max Boundary: Don't exceed current stock
           if (newQty > item.stock) return item;
 
           return { ...item, quantity: newQty };

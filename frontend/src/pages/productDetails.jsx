@@ -39,13 +39,13 @@ export default function ProductDetails() {
     );
   }
 
-  if (!product || !selectedVariant) return <div className="text-zinc-500 font-mono text-center mt-20">[ ERR: HARDWARE_NOT_FOUND ]</div>;
+  if (!product || !selectedVariant) return <div className="text-zinc-500 font-mono text-center mt-20">Product not found</div>;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-cyan-500 selection:text-black">
       <nav className="p-6 max-w-7xl mx-auto border-b border-zinc-900">
         <button onClick={() => window.history.back()} className="text-zinc-500 hover:text-cyan-500 transition-colors text-xs font-mono tracking-widest uppercase">
-          &lt; RETURN_TO_CATALOG
+          &lt; Back to Catalog
         </button>
       </nav>
 
@@ -73,12 +73,12 @@ export default function ProductDetails() {
 
           <div className="space-y-8">
             <div>
-              <span className="text-zinc-600 font-mono text-[10px] uppercase tracking-widest">Active_Configuration</span>
+              <span className="text-zinc-600 font-mono text-[10px] uppercase tracking-widest">Price</span>
               <div className="text-4xl font-mono font-bold mt-1 text-white">${selectedVariant.price}</div>
             </div>
 
             <div>
-              <h3 className="font-mono text-[10px] uppercase text-zinc-600 mb-4 tracking-widest">Select_Variant</h3>
+              <h3 className="font-mono text-[10px] uppercase text-zinc-600 mb-4 tracking-widest">Select Option</h3>
               <div className="flex flex-wrap gap-3">
                 {product.variants.map(v => (
                   <button
@@ -100,7 +100,7 @@ export default function ProductDetails() {
                <div className="flex items-center gap-3 mb-6">
                   <span className={`h-1.5 w-1.5 animate-pulse ${selectedVariant.stock > 0 ? "bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"}`}></span>
                   <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider">
-                    {selectedVariant.stock > 0 ? `Stock_Level: ${selectedVariant.stock}` : "Status: Depleted"}
+                    {selectedVariant.stock > 0 ? `In Stock: ${selectedVariant.stock}` : "Out of Stock"}
                   </span>
                </div>
                
@@ -109,14 +109,14 @@ export default function ProductDetails() {
                  disabled={selectedVariant.stock === 0}
                  className="w-full max-w-sm py-4 bg-zinc-100 text-zinc-950 font-black uppercase tracking-widest hover:bg-cyan-500 hover:text-white transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:bg-zinc-900 disabled:text-zinc-700 disabled:border disabled:border-zinc-800 disabled:cursor-not-allowed disabled:transform-none"
                >
-                 {selectedVariant.stock === 0 ? "Unavailable" : "Add to Rig"}
+                 {selectedVariant.stock === 0 ? "Unavailable" : "Add to Cart"}
                </button>
             </div>
           </div>
 
           <div className="mt-16 pt-8 border-t border-zinc-800">
             <h3 className="text-xs uppercase text-zinc-500 font-mono mb-6 tracking-[0.2em] flex items-center gap-4">
-              Hardware_Specs <span className="h-[1px] flex-grow bg-zinc-800"></span>
+              Specifications <span className="h-[1px] flex-grow bg-zinc-800"></span>
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-12">
               {Object.entries(product.specifications).map(([key, value]) => (
