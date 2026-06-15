@@ -13,7 +13,7 @@ import ProductDetails from './pages/productDetails';
 import Navbar from "./components/common/Navbar";
 import CartDrawer from "./features/cart/cartSlider";
 import ProtectedRoute from "./components/common/ProtectedRoute";
-import Analytics from './pages/admin/analytics';
+import Analytics from './pages/admin/Analytics';
 import './index.css';
 import MyOrders from './pages/UserOrders';
 
