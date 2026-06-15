@@ -2,9 +2,9 @@ const prisma = require("../../../config/db");
 
 
 class ProductRepository {
-  /**
-   * Fetches all products with their variants, supporting optional filters.
-   */
+  
+    //Fetches all products with their variants, supporting optional filters.
+  
   async findAll(filters = {}, skip = 0, take = 9) {
     const { category, brand, minPrice, maxPrice, searchTerm } = filters;
 

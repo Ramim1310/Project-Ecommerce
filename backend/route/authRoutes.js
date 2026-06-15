@@ -182,21 +182,22 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
 
-        // Generate 2FA OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-
-        await prisma.user.update({
-            where: { email },
-            data: { otp, otpExpires },
-        });
-
-        await otpMailer(email, otp, 'login');
+        // Issue JWT (7 day session)
+        const token = jwt.sign(
+            { id: user.id, email: user.email, name: user.name, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
 
         res.status(200).json({
-            message: 'A 6-digit login code has been sent to your email.',
-            requiresTwoFactor: true,
-            email,
+            message: 'Login successful! Welcome back.',
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
         });
 
     } catch (error) {

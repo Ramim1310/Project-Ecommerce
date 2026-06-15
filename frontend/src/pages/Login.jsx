@@ -89,7 +89,7 @@ export default function Login() {
                 <div className="flex flex-col gap-3 w-full max-w-[300px] z-10">
                     <div className="flex items-center gap-3 bg-zinc-800/50 border border-zinc-700/50 rounded-sm px-4 py-3.5 text-sm text-zinc-300">
                         <span className="text-cyan-500 text-base">🔐</span>
-                        <span>Two-factor login protection</span>
+                        <span>Secure account access</span>
                     </div>
                     <div className="flex items-center gap-3 bg-zinc-800/50 border border-zinc-700/50 rounded-sm px-4 py-3.5 text-sm text-zinc-300">
                         <span className="text-cyan-500 text-base">📦</span>
