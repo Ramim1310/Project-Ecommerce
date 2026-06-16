@@ -1,32 +1,26 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 require('dotenv').config();
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-    },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 const otpMailer = async (toMail, otp, purpose = 'login') => {
     const isRegistration = purpose === 'register';
 
     const subject = isRegistration
-        ? '🔐 TechParts Store — Verify Your Email'
-        : '🔑 TechParts Store — Your Login Code';
+        ? '🔐 NexusTech — Verify Your Email'
+        : '🔑 NexusTech — Your Login Code';
 
     const heading = isRegistration
         ? 'Verify Your Email Address'
         : 'Your Two-Factor Login Code';
 
     const description = isRegistration
-        ? 'Welcome to TechParts Store! Please use the code below to verify your email and activate your account.'
+        ? 'Welcome to NexusTech! Please use the code below to verify your email and activate your account.'
         : 'Use the code below to complete your login. This code is valid for 10 minutes.';
 
     const mailInfo = {
-        from: `"TechParts Store" <${process.env.EMAIL_USER}>`,
+        from: `NexusTech <${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}>`,
         to: toMail,
         subject,
         html: `
@@ -79,8 +73,18 @@ const otpMailer = async (toMail, otp, purpose = 'login') => {
         `,
     };
 
-    await transporter.sendMail(mailInfo);
-    console.log(`📧 OTP sent to ${toMail} (purpose: ${purpose})`);
+    try {
+        const { data, error } = await resend.emails.send(mailInfo);
+        
+        if (error) {
+            console.error('❌ Error sending OTP email:', error);
+            return;
+        }
+
+        console.log(`📧 OTP sent to ${toMail} (purpose: ${purpose}, Resend ID: ${data?.id})`);
+    } catch (error) {
+        console.error('❌ Failed to send OTP email via Resend:', error);
+    }
 };
 
 module.exports = { otpMailer };
