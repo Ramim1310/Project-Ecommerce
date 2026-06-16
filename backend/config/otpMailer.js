@@ -1,7 +1,4 @@
-const { Resend } = require('resend');
 require('dotenv').config();
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 const otpMailer = async (toMail, otp, purpose = 'login') => {
@@ -19,11 +16,7 @@ const otpMailer = async (toMail, otp, purpose = 'login') => {
         ? 'Welcome to NexusTech! Please use the code below to verify your email and activate your account.'
         : 'Use the code below to complete your login. This code is valid for 10 minutes.';
 
-    const mailInfo = {
-        from: `NexusTech <${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}>`,
-        to: toMail,
-        subject,
-        html: `
+    const htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -70,20 +63,40 @@ const otpMailer = async (toMail, otp, purpose = 'login') => {
           </table>
         </body>
         </html>
-        `,
+        `;
+
+    const payload = {
+        sender: {
+            name: 'NexusTech',
+            email: process.env.BREVO_FROM_EMAIL || 'onboarding@nexustech.dev'
+        },
+        to: [{ email: toMail }],
+        subject,
+        htmlContent
     };
 
     try {
-        const { data, error } = await resend.emails.send(mailInfo);
-        
-        if (error) {
-            console.error('❌ Error sending OTP email:', error);
-            return;
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'api-key': process.env.BREVO_API_KEY,
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(' Error sending OTP email:', data);
+            throw new Error(data.message || 'Failed to send email via Brevo');
         }
 
-        console.log(`📧 OTP sent to ${toMail} (purpose: ${purpose}, Resend ID: ${data?.id})`);
+        console.log(`📧 OTP sent to ${toMail} (purpose: ${purpose}, Brevo Message ID: ${data.messageId})`);
     } catch (error) {
-        console.error('❌ Failed to send OTP email via Resend:', error);
+        console.error('Failed to send OTP email via Brevo:', error);
+        throw error;
     }
 };
 

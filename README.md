@@ -19,7 +19,7 @@ A dark-themed e-commerce platform engineered specifically for PC enthusiasts, cu
 ## Primary Features
 - **Dynamic Catalog:** Browse hardware with low-latency search and category filtering.
 - **Persistent Cart:** Context-based shopping cart that updates in real-time.
-- **Secure Authentication:** JWT-based sessions with OTP (One-Time Password) email verification via Nodemailer.
+- **Secure Authentication:** JWT-based sessions with OTP (One-Time Password) email verification via Resend.
 - **Integrated Payments:** End-to-end secure checkout pipeline via the SSLCommerz payment gateway.
 - **Admin Dashboard:** Dedicated root-access panel for managing products, tracking orders, and viewing store telemetry/analytics (powered by Recharts).
 
@@ -36,7 +36,7 @@ A dark-themed e-commerce platform engineered specifically for PC enthusiasts, cu
 To provide instant search feedback without overwhelming the backend with queries on every keystroke, the global search bar implements a custom debounce hook. This delays API calls until the user pauses typing (500ms threshold), drastically reducing unnecessary database load while maintaining a highly responsive UI.
 
 ### OTP Verification Flow
-To ensure account security and validity, the registration and login flows incorporate email-based OTP verification. Nodemailer handles the dispatch of verification codes, ensuring that only verified users can place orders or access sensitive account details.
+To ensure account security and validity, the registration and login flows incorporate email-based OTP verification. Resend handles the dispatch of verification codes, ensuring that only verified users can place orders or access sensitive account details.
 
 ### Payment Gateway Integration
 The checkout process integrates directly with the SSLCommerz API. The backend manages the secure handshake, payment initiation, and asynchronous callback verification to ensure orders are only marked "PAID" upon cryptographic confirmation from the gateway.
@@ -66,8 +66,8 @@ Create a `.env` file in the `/backend` directory:
 PORT=5001
 DATABASE_URL="postgresql://user:password@localhost:5432/nexustech"
 JWT_SECRET="your_super_secure_jwt_secret"
-SMTP_USER="your_email@gmail.com"
-SMTP_PASS="your_app_password"
+RESEND_API_KEY="your_resend_api_key"
+RESEND_FROM_EMAIL="onboarding@resend.dev"
 STORE_ID="sslcommerz_store_id"
 STORE_PASS="sslcommerz_store_pass"
 FRONTEND_URL="http://localhost:5173"
