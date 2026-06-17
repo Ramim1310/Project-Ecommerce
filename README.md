@@ -1,3 +1,7 @@
+# Live Demo:
+https://project-ecommerce-five.vercel.app/
+
+
 # NexusTech
 
 **High-performance hardware. Minimalist software.**
