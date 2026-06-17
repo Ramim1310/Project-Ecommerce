@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
+
 export default function ProductCard({ product }) {
+    const navigate = useNavigate();
     return (
         <div className="bg-zinc-900 border border-zinc-800 hover-industrial flex flex-col h-full group cursor-pointer relative overflow-hidden" onClick={() => {
-            window.location.href = `/product/${product.id}`;
+            navigate(`/product/${product.id}`);
         }}>
             {/* Image Container */}
             <div className="h-48 bg-zinc-950 flex items-center justify-center p-4">
